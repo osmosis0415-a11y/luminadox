@@ -16,7 +16,8 @@ test('icons use a locally hosted pinned library', () => {
 });
 
 test('the offline shell caches the local icon library', () => {
-  assert.match(serviceWorker, /lumina-docs-shell-v5/);
+  assert.match(serviceWorker, /lumina-docs-shell-v6/);
   assert.match(serviceWorker, /\.\/vendor\/lucide-1\.79\.0\.min\.js/);
   assert.doesNotMatch(serviceWorker, /unpkg\.com\/lucide/);
+  assert.match(serviceWorker, /request\.mode === 'navigate'[\s\S]*?await fetch\(request\)[\s\S]*?caches\.match\('\.\/index\.html'\)/);
 });

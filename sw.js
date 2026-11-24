@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lumina-docs-shell-v5';
+const CACHE_NAME = 'lumina-docs-shell-v6';
 const APP_SHELL = ['./', './index.html', './accessibility.css', './accessibility.js', './lumina-storage.js', './vendor/lucide-1.79.0.min.js', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 const CDN_HOSTS = new Set(['cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com', 'www.gstatic.com']);
 
@@ -31,6 +31,21 @@ self.addEventListener('fetch', event => {
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
   if (url.origin === self.location.origin) {
+    if (request.mode === 'navigate') {
+      event.respondWith((async () => {
+        try {
+          const response = await fetch(request);
+          if (response.ok) {
+            const cache = await caches.open(CACHE_NAME);
+            cache.put('./index.html', response.clone());
+          }
+          return response;
+        } catch (error) {
+          return (await caches.match('./index.html')) || Response.error();
+        }
+      })());
+      return;
+    }
     event.respondWith((async () => {
       const cached = await caches.match(request);
       if (cached) return cached;
@@ -42,7 +57,6 @@ self.addEventListener('fetch', event => {
         }
         return response;
       } catch (error) {
-        if (request.mode === 'navigate') return (await caches.match('./index.html')) || Response.error();
         return Response.error();
       }
     })());
