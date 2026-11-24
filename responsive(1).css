@@ -1,0 +1,100 @@
+        /* =========================================================
+           RESPONSIVE APP SHELL — desktop, tablet, mobile & foldables
+           Keep the editor content model and print layout unchanged.
+        ========================================================= */
+        html, body {
+            width: 100%; max-width: 100%; min-width: 0; overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+        }
+        body { min-height: 100vh; min-height: 100dvh; overscroll-behavior: none; }
+        #top-header, #formatting-ribbon, #table-tools-bar, #track-changes-bar, #find-replace-bar { max-width: 100%; }
+        #top-header {
+            padding-left: max(0.75rem, env(safe-area-inset-left));
+            padding-right: max(0.75rem, env(safe-area-inset-right));
+        }
+        #workspace-scroll {
+            min-width: 0; min-height: 0; overscroll-behavior: contain; scrollbar-gutter: stable;
+        }
+        #page-sheet { min-width: 0; width: min(100%, 850px); box-sizing: border-box; }
+        #editor { max-width: 100%; min-width: 0; overflow-wrap: anywhere; caret-color: #4f46e5; }
+        #editor table, #editor pre { max-width: 100%; }
+        #left-sidebar, #right-sidebar { min-width: 0; max-height: 100%; overscroll-behavior: contain; }
+        button, select, input, textarea, label { touch-action: manipulation; }
+        button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+        [contenteditable="true"]:focus-visible { outline: 2px solid #818cf8; outline-offset: 2px; }
+
+        /* Phones: compact chrome, full-width writing surface, safe-area aware drawers. */
+        @media (max-width: 640px) {
+            #top-header { height: 3.5rem; min-height: 3.5rem; gap: 0.25rem; padding-top: env(safe-area-inset-top, 0px); }
+            #top-header > div:last-child { gap: 0.125rem; }
+            #top-header button { min-width: 40px; min-height: 40px; justify-content: center; }
+            #doc-title-input { min-width: 0; max-width: 34vw; font-size: 14px; }
+            #save-badge { padding: 0.4rem; }
+            #formatting-ribbon {
+                min-height: 48px; padding-left: max(0.4rem, env(safe-area-inset-left));
+                padding-right: max(0.4rem, env(safe-area-inset-right)); gap: 0.25rem; scroll-snap-type: x proximity;
+            }
+            #formatting-ribbon > div { scroll-snap-align: start; }
+            #formatting-ribbon .tb-btn { min-width: 42px; min-height: 42px; }
+            #workspace-scroll { padding: 0 !important; align-items: stretch; -webkit-overflow-scrolling: touch; }
+            #page-sheet {
+                width: 100%; max-width: none; min-height: 100%; border-left: 0; border-right: 0;
+                border-radius: 0; box-shadow: none;
+                padding: 1.25rem max(1rem, env(safe-area-inset-left)) calc(1.5rem + env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-right));
+            }
+            #editor { min-height: 65vh; min-height: 65dvh; font-size: 16px; line-height: 1.7; }
+            #left-sidebar { width: min(88vw, 340px); max-width: 88vw; padding-bottom: env(safe-area-inset-bottom, 0px); }
+            #right-sidebar { width: min(94vw, 390px); max-width: 94vw; padding-bottom: env(safe-area-inset-bottom, 0px); }
+            #sidebar-backdrop { inset: 0; padding-bottom: env(safe-area-inset-bottom, 0px); }
+            #table-tools-bar, #track-changes-bar { min-height: 46px; padding-left: 0.5rem; padding-right: 0.5rem; }
+            #find-replace-bar { padding-left: 0.75rem; padding-right: 0.75rem; }
+            #find-replace-bar input { flex: 1 1 120px; min-width: 0; width: auto; }
+            #status-footer {
+                padding-left: max(0.5rem, env(safe-area-inset-left));
+                padding-right: max(0.5rem, env(safe-area-inset-right));
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+            }
+            #editor table {
+                display: block; width: 100%; overflow-x: auto; overscroll-behavior-inline: contain;
+                -webkit-overflow-scrolling: touch;
+            }
+            #editor th, #editor td { min-width: 5rem; padding: 0.45em 0.55em; }
+            #editor img, #editor video, #editor iframe { max-width: 100%; }
+            input, textarea, select { font-size: 16px !important; }
+        }
+
+        /* Tablets and compact laptops. */
+        @media (min-width: 641px) and (max-width: 1023px) {
+            #left-sidebar { width: 15rem; }
+            #right-sidebar { width: min(19rem, 38vw); }
+            #workspace-scroll { padding-left: clamp(0.75rem, 2vw, 1.5rem); padding-right: clamp(0.75rem, 2vw, 1.5rem); }
+            #page-sheet { padding-left: clamp(1.5rem, 5vw, 3rem); padding-right: clamp(1.5rem, 5vw, 3rem); }
+            #top-header > div:last-child { gap: 0.25rem; }
+        }
+
+        /* Wide desktop. */
+        @media (min-width: 1280px) {
+            #workspace-scroll { padding-left: clamp(2rem, 3vw, 4rem); padding-right: clamp(2rem, 3vw, 4rem); }
+            #page-sheet { box-shadow: 0 8px 32px rgba(15, 23, 42, 0.07); }
+        }
+
+        /* Foldables in book posture: editor on the left display segment, AI copilot
+           on the right segment when opened. Navigation remains an overlay. */
+        @media (horizontal-viewport-segments: 2) {
+            body > .flex-1.flex.overflow-hidden.relative {
+                display: grid !important;
+                grid-template-columns: env(viewport-segment-width 0 0, 1fr) env(viewport-segment-width 1 0, 1fr);
+                column-gap: max(0px, calc(env(viewport-segment-left 1 0, 50vw) - env(viewport-segment-width 0 0, 50vw)));
+                min-width: 0;
+            }
+            #workspace-scroll { grid-column: 1; min-width: 0; padding-left: 1rem; padding-right: 1rem; }
+            #page-sheet { max-width: 760px; }
+            #left-sidebar { position: absolute !important; inset: 0 auto 0 0; z-index: 40; width: min(340px, 82%); }
+            #right-sidebar {
+                grid-column: 2; position: relative !important; inset: auto !important; width: 100%;
+                max-width: none; min-width: 0; box-shadow: none; border-left: 1px solid rgba(148, 163, 184, 0.25);
+            }
+            #sidebar-backdrop { z-index: 35; }
+        }
+        @media (vertical-viewport-segments: 2) { #workspace-scroll { min-height: 0; } }
+
