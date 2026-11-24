@@ -7,10 +7,11 @@ frame.addEventListener('load',async()=>{try{
   const parsed=new DOMParser().parseFromString(packaged,'text/html');
   const checks={
     'bundles stylesheet':!!parsed.querySelector('style[data-bundled-from="accessibility.css"]'),
+    'bundles icons':!!parsed.querySelector('script[data-bundled-from="lucide-1.79.0.min.js"]'),
     'bundles storage':!!parsed.querySelector('script[data-bundled-from="lumina-storage.js"]'),
     'bundles accessibility':!!parsed.querySelector('script[data-bundled-from="accessibility.js"]'),
     'removes local stylesheet reference':!parsed.querySelector('link[href="./accessibility.css"]'),
-    'removes local script reference':!parsed.querySelector('script[src="./lumina-storage.js"],script[src="./accessibility.js"]')
+    'removes local script reference':!parsed.querySelector('script[src="./vendor/lucide-1.79.0.min.js"],script[src="./lumina-storage.js"],script[src="./accessibility.js"]')
   };
   const failed=Object.entries(checks).filter(([,ok])=>!ok).map(([name])=>name);
   if(failed.length)throw new Error(failed.join(', '));
