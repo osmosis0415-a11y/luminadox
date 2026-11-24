@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Standalone packaging test</title></head><body><output id="result">RUNNING</output><iframe id="app" src="../index.html" hidden></iframe><script>
+const frame=document.getElementById('app');
+frame.addEventListener('load',async()=>{try{
+  let packaged='';
+  frame.contentWindow.downloadBlob=content=>{packaged=content};
+  await frame.contentWindow.downloadStandaloneSite();
+  const parsed=new DOMParser().parseFromString(packaged,'text/html');
+  const checks={
+    'bundles stylesheet':!!parsed.querySelector('style[data-bundled-from="accessibility.css"]'),
+    'bundles storage':!!parsed.querySelector('script[data-bundled-from="lumina-storage.js"]'),
+    'bundles accessibility':!!parsed.querySelector('script[data-bundled-from="accessibility.js"]'),
+    'removes local stylesheet reference':!parsed.querySelector('link[href="./accessibility.css"]'),
+    'removes local script reference':!parsed.querySelector('script[src="./lumina-storage.js"],script[src="./accessibility.js"]')
+  };
+  const failed=Object.entries(checks).filter(([,ok])=>!ok).map(([name])=>name);
+  if(failed.length)throw new Error(failed.join(', '));
+  document.getElementById('result').textContent='PASS: '+Object.keys(checks).join(', ');document.title='PASS';
+}catch(error){document.getElementById('result').textContent='FAIL: '+error.message;document.title='FAIL'}});
+</script></body></html>

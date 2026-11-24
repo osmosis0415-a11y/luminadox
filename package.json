@@ -1,0 +1,8 @@
+{
+  "name": "lumina-docs",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/storage.test.js",
+    "check": "node --check lumina-storage.js && node --check accessibility.js && node --check sw.js"
+  }
+}

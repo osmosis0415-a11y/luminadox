@@ -1,33 +1,32 @@
-# Lumina Docs — GitHub Pages package
+# Lumina Docs — GitHub Pages
 
-This package contains the existing Lumina Docs single-page application, prepared for static hosting.
+Production: https://osmosis0415-a11y.github.io/luminadox/
 
-## Deploy to GitHub Pages
+## Deployment
 
-1. Open `https://github.com/osmosis0415-a11y/luminadox`.
-2. Upload `index.html`, `manifest.webmanifest`, and `sw.js` to the repository root, and upload `icon-192.png` and `icon-512.png` to the repository root.
-3. Commit the changes to the `main` branch.
-4. In the repository, open **Settings → Pages**.
-5. Under **Build and deployment**, choose **Deploy from a branch**, select `main` and `/ (root)`, then Save.
-6. Wait for the Pages deployment to finish. The expected URL is `https://osmosis0415-a11y.github.io/luminadox/`.
+GitHub Pages publishes the repository root from `main`. A push to `main` triggers the Pages rebuild. Keep the complete repository contents together, including `index.html`, the accessibility and storage modules, manifest, service worker, and PNG icons.
 
-## Important operating notes
+## Operating notes
 
-- Documents are stored in the browser's local storage on the device/browser where they are created. Use **Docs → Backup/Restore** regularly to export a JSON backup and move work between devices.
-- Firebase cloud sync is not configured by this static package. The app therefore falls back to local browser storage. Do not assume documents are synced between devices.
-- Gemini AI requires your own Gemini API key. The key is held in page memory for the current tab only; it is not saved to local storage. Reloading/closing the tab clears it. A browser-side API key is still visible to the browser user and should be a restricted, low-quota key; do not use a privileged server key here.
-- Lucide icons, JSZip, and Google Fonts are loaded from CDNs when online. The original compiled Tailwind CSS is bundled in `index.html`; the development-only Tailwind CDN was removed. The service worker caches the app shell and attempts to cache selected libraries for repeat launches, but fully offline first-time use is not guaranteed.
-- This is a browser-based editor, not a HIPAA-compliant or hospital-approved clinical record system. Avoid storing identifiable patient information or confidential clinical records in it unless your institution has approved the security and data-handling arrangements.
+- Documents are stored primarily in IndexedDB in the current browser. localStorage is used only for migration and compatibility fallback.
+- Use **Docs → Backup/Restore** regularly. Browser storage is not a substitute for an external backup.
+- Firebase cloud sync is optional and requires runtime Firebase configuration, authentication policy, and reviewed Firestore security rules. The static GitHub Pages deployment otherwise operates in local-first mode.
+- Gemini AI requires a user-supplied restricted API key. It remains in memory for the current tab and is cleared on reload or close.
+- Lucide, JSZip, Google Fonts, Firebase, PubMed, and Gemini depend on external services. The service worker caches the local application shell and selected CDN resources for repeat visits.
+- Lumina Docs is not a certified clinical-record system. Do not store identifiable patient information without institutional approval.
 
-## Changes in this production package
+## Current production capabilities
 
-- Added a static web manifest and service worker registration for GitHub Pages/PWA support.
-- Added sanitization and record normalization for local backups and cloud snapshots before document HTML is inserted into the editor.
-- Removed persistent browser storage of Gemini API keys; the old saved key is cleared when the app starts.
-- Fixed duplicate save-badge element IDs and made Lucide icon initialization tolerant of CDN/offline failures.
-- Made Firebase initialization idempotent to avoid duplicate initialization when both startup paths run.
-- Updated the AI model identifier to `gemini-3.8-flash`; model availability and API access remain subject to Google's current API support and your key's permissions.
+- IndexedDB-first persistence with migration from legacy localStorage data.
+- Coalesced durable sync outbox: one pending operation per document.
+- Timestamped deletion tombstones and newest-write conflict handling.
+- Isolated Firestore subcollections for shared rooms.
+- Firebase libraries load dynamically only when cloud configuration exists.
+- Self-contained downloaded HTML with Lumina's local accessibility and storage modules embedded.
+- Responsive accessibility, dialog focus management, reduced-motion support, and visible keyboard focus.
+- Content Security Policy and pinned Lucide version.
+- GitHub Actions validation for unit and syntax checks.
 
 ## Validation
 
-The inline JavaScript has been syntax-checked with Node.js. Browser-level testing of every editor workflow, external API integration, PWA installation, and GitHub Pages deployment must still be completed in the target browser after publishing.
+Run `npm test` and `npm run check`. Browser harnesses in `tests/` validate IndexedDB/outbox behavior and standalone packaging. Production deployment is complete only after the public HTML, assets, and service-worker version are verified at the URL above.

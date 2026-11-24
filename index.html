@@ -5,6 +5,7 @@
     <title>Lumina Docs — Medical PG Thesis &amp; Word Processor</title>
     <!-- Installable Web App (PWA) Meta Tags -->
     <meta name="description" content="Distraction-free word processor and Medical PG (MD/MS/DNB) thesis suite with Vancouver citations, PubMed lookup, and optional AI Co-Pilot.">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://unpkg.com https://cdnjs.cloudflare.com https://www.gstatic.com https://fonts.googleapis.com https://fonts.gstatic.com https://eutils.ncbi.nlm.nih.gov https://generativelanguage.googleapis.com https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
     <meta name="theme-color" content="#4f46e5">
     <link rel="manifest" href="./manifest.webmanifest">
     <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
@@ -20,7 +21,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&amp;family=Playfair+Display:ital,wght@0,600;0,700;1,400&amp;display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest" crossorigin="anonymous" defer></script>
+    <script src="https://unpkg.com/lucide@1.79.0/dist/umd/lucide.min.js" crossorigin="anonymous" defer></script>
     <!-- JSZip for Native .docx (OOXML) Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous" defer></script>
 
@@ -1679,8 +1680,18 @@
             showToast('To install natively: open your GitHub Pages link in Chrome/Edge or use Share → Add to Home Screen on iOS/iPad.');
         }
 
-        function downloadStandaloneSite() {
+        async function downloadStandaloneSite() {
             try {
+                const loadLocalAsset = async path => {
+                    const response = await fetch(new URL(path, document.baseURI));
+                    if (!response.ok) throw new Error(`Could not bundle ${path}`);
+                    return response.text();
+                };
+                const [accessibilityCss, storageJs, accessibilityJs] = await Promise.all([
+                    loadLocalAsset('./accessibility.css'),
+                    loadLocalAsset('./lumina-storage.js'),
+                    loadLocalAsset('./accessibility.js')
+                ]);
                 const clone = document.documentElement.cloneNode(true);
                 // Clean runtime state so the downloaded site boots fresh
                 const clonedEditor = clone.querySelector('#editor');
@@ -1693,6 +1704,24 @@
                 if (clonedKeyPanel) clonedKeyPanel.classList.add('hidden');
                 const clonedToast = clone.querySelector('#toast-container');
                 if (clonedToast) clonedToast.innerHTML = '';
+
+                const cssLink = clone.querySelector('link[href="./accessibility.css"]');
+                if (cssLink) {
+                    const style = document.createElement('style');
+                    style.setAttribute('data-bundled-from', 'accessibility.css');
+                    style.textContent = accessibilityCss;
+                    cssLink.replaceWith(style);
+                }
+                const inlineScript = (selector, source, name) => {
+                    const external = clone.querySelector(selector);
+                    if (!external) return;
+                    const script = document.createElement('script');
+                    script.setAttribute('data-bundled-from', name);
+                    script.textContent = source.replace(/<\/script/gi, '<\\/script');
+                    external.replaceWith(script);
+                };
+                inlineScript('script[src="./lumina-storage.js"]', storageJs, 'lumina-storage.js');
+                inlineScript('script[src="./accessibility.js"]', accessibilityJs, 'accessibility.js');
 
                 const fullHtml = '<!DOCTYPE html>\n' + clone.outerHTML;
                 downloadBlob(fullHtml, 'index.html', 'text/html');
@@ -1939,7 +1968,7 @@
             const prevActive = documents.find(d => d.id === activeDocId);
             documents = (window.LuminaStorage?.mergeDocuments(documents, remoteDocs) || remoteDocs)
                 .map(normalizeDocumentRecord).filter(Boolean);
-            if (documents.length === 0) return;
+            if (documents.length === 0) documents.push(createDefaultWelcomeDoc());
             saveToLocalCache();
 
             const updatedActive = documents.find(d => d.id === activeDocId);
@@ -2541,11 +2570,19 @@
                 document.getElementById('page-header-input').value = doc?.runningHeader || '';
                 document.getElementById('page-margin-select').value = doc?.marginStyle || 'binding';
             }
-            document.getElementById(id).classList.remove('hidden');
+            const modal = document.getElementById(id);
+            modal._returnFocus = document.activeElement;
+            modal.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                modal.querySelector('input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"])')?.focus();
+            });
         }
 
         function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
+            const modal = document.getElementById(id);
+            modal.classList.add('hidden');
+            modal._returnFocus?.focus?.();
+            modal._returnFocus = null;
         }
 
         function confirmInsertLink() {
@@ -4548,10 +4585,8 @@
 
     <!-- ==================== REAL-TIME CLOUD SYNC MODULE ==================== -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
+        let initializeApp, getAuth, signInAnonymously, signInWithCustomToken;
+        let getFirestore, doc, setDoc, onSnapshot, collection;
         let db = null;
         let auth = null;
         let currentUser = null;
@@ -4563,7 +4598,7 @@
         function getActiveCollectionRef() {
             if (!db || !currentUser) return null;
             if (currentRoomCode) {
-                return collection(db, 'artifacts', appId, 'public', 'data', 'lumina_shared_docs');
+                return collection(db, 'artifacts', appId, 'public', 'data', 'lumina_sync_rooms', currentRoomCode, 'documents');
             }
             return collection(db, 'artifacts', appId, 'users', currentUser.uid, 'lumina_docs');
         }
@@ -4571,7 +4606,7 @@
         function getDocRef(docId) {
             if (!db || !currentUser) return null;
             if (currentRoomCode) {
-                return doc(db, 'artifacts', appId, 'public', 'data', 'lumina_shared_docs', docId);
+                return doc(db, 'artifacts', appId, 'public', 'data', 'lumina_sync_rooms', currentRoomCode, 'documents', docId);
             }
             return doc(db, 'artifacts', appId, 'users', currentUser.uid, 'lumina_docs', docId);
         }
@@ -4594,13 +4629,7 @@
                     const list = [];
                     snapshot.forEach((docSnap) => {
                         const data = docSnap.data();
-                        if (currentRoomCode) {
-                            if (data && data.roomCode === currentRoomCode) {
-                                list.push({ ...data, id: data.id || docSnap.id });
-                            }
-                        } else {
-                            list.push({ ...data, id: data.id || docSnap.id });
-                        }
+                        if (data) list.push({ ...data, id: data.id || docSnap.id });
                     });
                     window.handleRemoteDocumentsSnapshot?.(list);
                     window.updateSyncBadge?.('synced');
@@ -4631,6 +4660,15 @@
                     const firebaseConfig = typeof __firebase_config === 'string'
                         ? JSON.parse(__firebase_config)
                         : __firebase_config;
+
+                    const [appModule, authModule, firestoreModule] = await Promise.all([
+                        import('https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js'),
+                        import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js'),
+                        import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js')
+                    ]);
+                    ({ initializeApp } = appModule);
+                    ({ getAuth, signInAnonymously, signInWithCustomToken } = authModule);
+                    ({ getFirestore, doc, setDoc, onSnapshot, collection } = firestoreModule);
 
                     const app = initializeApp(firebaseConfig);
                     db = getFirestore(app);
@@ -4727,7 +4765,8 @@
                 if (!currentUser || !db || !docId) return;
                 try {
                     const ref = getDocRef(docId);
-                    await deleteDoc(ref);
+                    const deletedAt = Date.now();
+                    await setDoc(ref, { id: docId, deletedAt, updatedAt: deletedAt, lastEditedByDevice: '' });
                     return true;
                 } catch (err) {
                     console.error('Cloud delete error:', err);

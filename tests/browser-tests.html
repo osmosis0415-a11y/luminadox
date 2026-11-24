@@ -1,8 +1,10 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><title>Lumina browser tests</title><script src="../lumina-storage.js"></script></head><body><output id="result">RUNNING</output><script>
 (async()=>{const checks=[];const check=(name,value)=>{if(!value)throw new Error(name);checks.push(name)};
 check('merge newest wins',LuminaStorage.mergeDocuments([{id:'a',updatedAt:1,title:'old'}],[{id:'a',updatedAt:2,title:'new'}])[0].title==='new');
-const key='lumina_browser_test_'+Date.now();const store=LuminaStorage.create({legacyKey:key});await store.saveAll([{id:'browser',title:'IndexedDB',updatedAt:1}]);const loaded=await store.load();check('IndexedDB round trip',loaded.length===1&&loaded[0].id==='browser');
-await store.enqueue({id:'queue-1',type:'save',docId:'browser'});check('outbox persists',(await store.pending()).some(x=>x.id==='queue-1'));await store.acknowledge('queue-1');check('outbox acknowledges',!(await store.pending()).some(x=>x.id==='queue-1'));
+check('tombstone deletes',LuminaStorage.mergeDocuments([{id:'gone',updatedAt:1}],[{id:'gone',updatedAt:2,deletedAt:2}]).length===0);
+const suffix=Date.now();const docId='browser-'+suffix;const store=LuminaStorage.create({legacyKey:'lumina_browser_test_'+suffix});await store.saveAll([{id:docId,title:'IndexedDB',updatedAt:1}]);const loaded=await store.load();check('IndexedDB round trip',loaded.some(x=>x.id===docId));
+await store.enqueue({type:'save',docId,document:{id:docId,title:'old'},updatedAt:2});await store.enqueue({type:'save',docId,document:{id:docId,title:'new'},updatedAt:3});let queued=await store.pending();check('outbox coalesces saves',queued.filter(x=>x.docId===docId).length===1&&queued.find(x=>x.docId===docId).document.title==='new');
+await store.enqueue({type:'delete',docId,updatedAt:4});queued=await store.pending();check('delete supersedes save',queued.filter(x=>x.docId===docId).length===1&&queued.find(x=>x.docId===docId).type==='delete');await store.acknowledge('delete:'+docId);check('outbox acknowledges',!(await store.pending()).some(x=>x.docId===docId));
 document.getElementById('result').textContent='PASS: '+checks.join(', ');document.title='PASS';
 })().catch(error=>{document.getElementById('result').textContent='FAIL: '+error.message;document.title='FAIL'});
 </script></body></html>

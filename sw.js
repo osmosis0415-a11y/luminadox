@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lumina-docs-shell-v2';
+const CACHE_NAME = 'lumina-docs-shell-v3';
 const APP_SHELL = ['./', './index.html', './accessibility.css', './accessibility.js', './lumina-storage.js', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 const CDN_HOSTS = new Set(['unpkg.com', 'cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com', 'www.gstatic.com']);
 
@@ -8,7 +8,7 @@ self.addEventListener('install', event => {
     await cache.addAll(APP_SHELL);
     // Best-effort cache of runtime libraries for repeat/offline launches.
     const urls = [
-      'https://unpkg.com/lucide@latest',
+      'https://unpkg.com/lucide@1.79.0/dist/umd/lucide.min.js',
       'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'
     ];
     await Promise.allSettled(urls.map(async url => {
