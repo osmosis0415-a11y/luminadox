@@ -1575,6 +1575,10 @@
     <!-- Toast Notifications Container -->
     <div id="toast-container" class="fixed bottom-12 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
+    <link rel="stylesheet" href="./accessibility.css">
+    <script src="./lumina-storage.js"></script>
+    <script src="./accessibility.js" defer></script>
+
     <!-- ==================== APPLICATION LOGIC ==================== -->
     <script>
         // ==========================================
@@ -1617,12 +1621,12 @@
         // ==========================================
         // 2. INITIALIZATION & THEME
         // ==========================================
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             window.lucide?.createIcons?.();
             initTheme();
             initCustomApiKey();
             initPwaInstallSupport();
-            loadWorkspace();
+            await loadWorkspace();
             setupEditorListeners();
             setupMobileAndTouchSupport();
             if (window.CloudSync) {
@@ -1827,15 +1831,31 @@
             };
         }
 
-        function saveToLocalCache() {
+        const localDocumentStore = window.LuminaStorage?.create({ legacyKey: LOCAL_STORAGE_KEY });
+
+        async function saveToLocalCache() {
+            if (localDocumentStore) {
+                await localDocumentStore.saveAll(documents);
+                return;
+            }
             try {
                 localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(documents));
             } catch (e) {}
         }
 
-        function loadWorkspace() {
+        async function loadWorkspace() {
+            if (localDocumentStore) {
+                try {
+                    const stored = await localDocumentStore.load();
+                    if (Array.isArray(stored) && stored.length > 0) {
+                        documents = stored.map(normalizeDocumentRecord).filter(Boolean);
+                    }
+                } catch (e) {
+                    console.warn('IndexedDB workspace load failed; using compatibility cache.', e);
+                }
+            }
             try {
-                const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+                const raw = documents.length ? null : localStorage.getItem(LOCAL_STORAGE_KEY);
                 if (raw) {
                     const parsed = JSON.parse(raw);
                     if (Array.isArray(parsed) && parsed.length > 0) {
@@ -1851,13 +1871,14 @@
             renderDocumentsList();
         }
 
-        function persistWorkspace(targetDoc = null) {
+        async function persistWorkspace(targetDoc = null) {
             saveToLocalCache();
             const docToSave = targetDoc || documents.find(d => d.id === activeDocId);
             if (docToSave) {
                 docToSave.lastEditedByDevice = DEVICE_SESSION_ID;
+                await localDocumentStore?.enqueue({ type: 'save', docId: docToSave.id, document: docToSave, updatedAt: Date.now() });
                 if (window.CloudSync && window.CloudSync.isReady()) {
-                    window.CloudSync.saveDocument(docToSave);
+                    window.CloudSync.saveDocument(docToSave).then(() => window.CloudSync.flushOutbox?.());
                     return;
                 }
             }
@@ -1916,7 +1937,8 @@
             remoteDocs.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
 
             const prevActive = documents.find(d => d.id === activeDocId);
-            documents = remoteDocs.map(normalizeDocumentRecord).filter(Boolean);
+            documents = (window.LuminaStorage?.mergeDocuments(documents, remoteDocs) || remoteDocs)
+                .map(normalizeDocumentRecord).filter(Boolean);
             if (documents.length === 0) return;
             saveToLocalCache();
 
@@ -2252,7 +2274,7 @@
             showToast('Medical PG Thesis created (Vancouver style, Times New Roman, 1.5x spacing)');
         }
 
-        function deleteDocument(id, event) {
+        async function deleteDocument(id, event) {
             if (event) event.stopPropagation();
             if (documents.length <= 1) {
                 showToast('Cannot delete the only document.', 'error');
@@ -2260,8 +2282,9 @@
             }
             documents = documents.filter(d => d.id !== id);
             saveToLocalCache();
+            await localDocumentStore?.enqueue({ type: 'delete', docId: id, updatedAt: Date.now() });
             if (window.CloudSync && window.CloudSync.isReady()) {
-                window.CloudSync.deleteDocument(id);
+                window.CloudSync.deleteDocument(id).then(() => window.CloudSync.flushOutbox?.());
             }
             if (activeDocId === id) {
                 openDocument(documents[0].id);
@@ -4629,6 +4652,7 @@
                     if (uidEl) uidEl.textContent = currentUser.uid;
 
                     subscribeToWorkspace();
+                    await this.flushOutbox();
                 } catch (err) {
                     console.error('Cloud sync initialization error:', err);
                     window.updateSyncBadge?.('local', 'Saved Locally');
@@ -4667,9 +4691,11 @@
                     }
                     await setDoc(ref, payload);
                     window.updateSyncBadge?.('synced');
+                    return true;
                 } catch (err) {
                     console.error('Cloud save error:', err);
                     window.updateSyncBadge?.('local', 'Saved Locally');
+                    return false;
                 }
             },
 
@@ -4680,13 +4706,32 @@
                 }
             },
 
+            async flushOutbox() {
+                if (!currentUser || !db || !window.LuminaStorage) return;
+                const store = window.LuminaStorage.create({ legacyKey: 'lumina_docs_workspace_v1' });
+                const queued = await store.pending();
+                for (const item of queued) {
+                    try {
+                        const ok = item.type === 'delete'
+                            ? await this.deleteDocument(item.docId)
+                            : await this.saveDocument(item.document);
+                        if (!ok) break;
+                        await store.acknowledge(item.id);
+                    } catch (_) {
+                        break;
+                    }
+                }
+            },
+
             async deleteDocument(docId) {
                 if (!currentUser || !db || !docId) return;
                 try {
                     const ref = getDocRef(docId);
                     await deleteDoc(ref);
+                    return true;
                 } catch (err) {
                     console.error('Cloud delete error:', err);
+                    return false;
                 }
             }
         };

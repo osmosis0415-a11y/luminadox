@@ -1,5 +1,5 @@
-const CACHE_NAME = 'lumina-docs-shell-v1';
-const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
+const CACHE_NAME = 'lumina-docs-shell-v2';
+const APP_SHELL = ['./', './index.html', './accessibility.css', './accessibility.js', './lumina-storage.js', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 const CDN_HOSTS = new Set(['unpkg.com', 'cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com', 'www.gstatic.com']);
 
 self.addEventListener('install', event => {

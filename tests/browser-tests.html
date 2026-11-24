@@ -1,0 +1,8 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Lumina browser tests</title><script src="../lumina-storage.js"></script></head><body><output id="result">RUNNING</output><script>
+(async()=>{const checks=[];const check=(name,value)=>{if(!value)throw new Error(name);checks.push(name)};
+check('merge newest wins',LuminaStorage.mergeDocuments([{id:'a',updatedAt:1,title:'old'}],[{id:'a',updatedAt:2,title:'new'}])[0].title==='new');
+const key='lumina_browser_test_'+Date.now();const store=LuminaStorage.create({legacyKey:key});await store.saveAll([{id:'browser',title:'IndexedDB',updatedAt:1}]);const loaded=await store.load();check('IndexedDB round trip',loaded.length===1&&loaded[0].id==='browser');
+await store.enqueue({id:'queue-1',type:'save',docId:'browser'});check('outbox persists',(await store.pending()).some(x=>x.id==='queue-1'));await store.acknowledge('queue-1');check('outbox acknowledges',!(await store.pending()).some(x=>x.id==='queue-1'));
+document.getElementById('result').textContent='PASS: '+checks.join(', ');document.title='PASS';
+})().catch(error=>{document.getElementById('result').textContent='FAIL: '+error.message;document.title='FAIL'});
+</script></body></html>
