@@ -528,7 +528,7 @@
                 <i data-lucide="panel-left" class="w-5 h-5"></i>
             </button>
 
-            <div class="flex items-center gap-2 shrink-0">
+            <div class="phone-brand flex items-center gap-2 shrink-0">
                 <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white shadow-sm">
                     <i data-lucide="feather" class="w-4 h-4"></i>
                 </div>
@@ -540,7 +540,7 @@
             <!-- Document Title Input -->
             <input id="doc-title-input" type="text" value="Untitled Document" placeholder="Document Title..." class="bg-transparent font-medium text-sm sm:text-base text-slate-800 dark:text-slate-100 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 truncate w-full max-w-xs sm:max-w-sm transition">
 
-            <button id="save-badge" onclick="openModal('cloud-sync-modal')" title="Cloud Sync Settings &amp; Multi-Device Linking" class="inline-flex items-center gap-1.5 text-xs text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 px-2.5 py-1 rounded-full shrink-0 transition cursor-pointer">
+            <button id="save-badge" onclick="openModal('cloud-sync-modal')" title="Cloud Sync Settings &amp; Multi-Device Linking" class="phone-hide inline-flex items-center gap-1.5 text-xs text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 px-2.5 py-1 rounded-full shrink-0 transition cursor-pointer">
                 <i data-lucide="cloud" class="w-3.5 h-3.5"></i>
                 <span id="save-badge-text" class="hidden sm:inline">Connecting...</span>
             </button>
@@ -549,7 +549,7 @@
         <!-- Right: View Controls, Export, AI Assistant, Theme -->
         <div class="flex items-center gap-1 sm:gap-1.5 shrink-0">
             <!-- Find & Replace Toggle -->
-            <button onclick="toggleFindReplace()" title="Find &amp; Replace (Ctrl+F)" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button onclick="toggleFindReplace()" title="Find &amp; Replace (Ctrl+F)" class="phone-hide p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="search" class="w-4 h-4"></i>
             </button>
 
@@ -560,18 +560,18 @@
             </button>
 
             <!-- Focus Mode -->
-            <button onclick="toggleFocusMode()" title="Distraction-Free Focus Mode" class="flex items-center gap-1.5 p-2 sm:px-2.5 sm:py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-medium transition">
+            <button onclick="toggleFocusMode()" title="Distraction-Free Focus Mode" class="phone-hide flex items-center gap-1.5 p-2 sm:px-2.5 sm:py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-medium transition">
                 <i data-lucide="maximize-2" class="w-4 h-4"></i>
                 <span class="hidden xl:inline">Focus</span>
             </button>
 
             <!-- Theme Toggle -->
-            <button onclick="toggleDarkMode()" title="Toggle Light / Dark Mode" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button onclick="toggleDarkMode()" title="Toggle Light / Dark Mode" class="phone-hide p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i id="theme-icon" data-lucide="moon" class="w-4 h-4"></i>
             </button>
 
             <!-- Install / Download Site Button -->
-            <button id="install-app-header-btn" onclick="openModal('install-app-modal')" title="Install as App or Download Site" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/70 text-xs font-medium transition">
+            <button id="install-app-header-btn" onclick="openModal('install-app-modal')" title="Install as App or Download Site" class="phone-hide flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/70 text-xs font-medium transition">
                 <i data-lucide="smartphone-nfc" class="w-3.5 h-3.5"></i>
                 <span class="hidden lg:inline">Install App</span>
             </button>
@@ -613,10 +613,25 @@
             </div>
 
             <!-- AI Co-Pilot Toggle -->
-            <button onclick="toggleRightSidebar()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-medium shadow-sm transition">
+            <button onclick="toggleRightSidebar()" class="phone-hide flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-medium shadow-sm transition">
                 <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
                 <span class="hidden sm:inline">AI Co-Pilot</span>
             </button>
+
+            <!-- Phone-only access to secondary actions -->
+            <div class="phone-more relative">
+                <button id="phone-actions-btn" onclick="togglePhoneActions(event)" aria-label="More actions" aria-expanded="false" aria-controls="phone-actions-menu" title="More actions" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 transition">
+                    <i data-lucide="ellipsis" class="w-4 h-4"></i>
+                </button>
+                <div id="phone-actions-menu" class="hidden absolute right-0 mt-2 w-52 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 p-1.5 z-50">
+                    <button onclick="closePhoneActions(); toggleFindReplace()" class="w-full px-3 py-2 text-left text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5"><i data-lucide="search" class="w-4 h-4"></i> Find &amp; replace</button>
+                    <button onclick="closePhoneActions(); toggleFocusMode()" class="w-full px-3 py-2 text-left text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5"><i data-lucide="maximize-2" class="w-4 h-4"></i> Focus mode</button>
+                    <button onclick="closePhoneActions(); toggleDarkMode()" class="w-full px-3 py-2 text-left text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5"><i data-lucide="moon" class="w-4 h-4"></i> Light / dark theme</button>
+                    <button onclick="closePhoneActions(); openModal('cloud-sync-modal')" class="w-full px-3 py-2 text-left text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5"><i data-lucide="cloud" class="w-4 h-4"></i> Sync settings</button>
+                    <button onclick="closePhoneActions(); openModal('install-app-modal')" class="w-full px-3 py-2 text-left text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5"><i data-lucide="smartphone-nfc" class="w-4 h-4"></i> Install app</button>
+                    <button onclick="closePhoneActions(); toggleRightSidebar()" class="w-full px-3 py-2 text-left text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5"><i data-lucide="sparkles" class="w-4 h-4"></i> AI Co-Pilot</button>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -644,7 +659,7 @@
             </select>
 
             <!-- Font Family -->
-            <select id="font-family" onchange="applyFontFamily(this.value)" title="Font Family" class="text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 cursor-pointer">
+            <select id="font-family" onchange="applyFontFamily(this.value)" title="Font Family" class="phone-advanced-select text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 cursor-pointer">
                 <option value="'Times New Roman', Times, serif">Times New Roman (Thesis)</option>
                 <option value="Inter, sans-serif" selected="">Inter (Sans)</option>
                 <option value="Merriweather, serif">Merriweather (Serif)</option>
@@ -653,7 +668,7 @@
             </select>
 
             <!-- Font Size -->
-            <select id="font-size" onchange="execCmd('fontSize', this.value)" title="Font Size" class="text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-1.5 py-1.5 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 cursor-pointer">
+            <select id="font-size" onchange="execCmd('fontSize', this.value)" title="Font Size" class="phone-advanced-select text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-1.5 py-1.5 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 cursor-pointer">
                 <option value="2">Small</option>
                 <option value="3" selected="">Normal</option>
                 <option value="4">Medium</option>
@@ -662,7 +677,7 @@
             </select>
 
             <!-- Line Spacing (Thesis Standard) -->
-            <select id="line-spacing" onchange="applyLineSpacing(this.value)" title="Line Spacing" class="text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-1.5 py-1.5 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 cursor-pointer">
+            <select id="line-spacing" onchange="applyLineSpacing(this.value)" title="Line Spacing" class="phone-advanced-select text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-1.5 py-1.5 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 cursor-pointer">
                 <option value="1.15">1.15x</option>
                 <option value="1.5">1.5x</option>
                 <option value="1.75" selected="">1.75x</option>
@@ -2431,6 +2446,7 @@
                 if (!menu.classList.contains('hidden') && !e.target.closest('#export-menu')) {
                     menu.classList.add('hidden');
                 }
+                if (!e.target.closest('.phone-more')) closePhoneActions();
             });
         }
 
@@ -3809,6 +3825,22 @@
         function toggleExportMenu(event) {
             event.stopPropagation();
             document.getElementById('export-menu').classList.toggle('hidden');
+        }
+
+        function closePhoneActions() {
+            const menu = document.getElementById('phone-actions-menu');
+            const button = document.getElementById('phone-actions-btn');
+            if (menu) menu.classList.add('hidden');
+            if (button) button.setAttribute('aria-expanded', 'false');
+        }
+
+        function togglePhoneActions(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('phone-actions-menu');
+            const button = document.getElementById('phone-actions-btn');
+            const willOpen = menu.classList.contains('hidden');
+            menu.classList.toggle('hidden');
+            button.setAttribute('aria-expanded', String(willOpen));
         }
 
         function exportDocument(format) {
