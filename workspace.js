@@ -17,7 +17,7 @@ function titleOf(title, fallback) {
 
 function linkFor(row) {
   switch (row.kind) {
-    case 'doc': return './index.html?doc=' + encodeURIComponent(row.sourceId);
+    case 'doc': return './docs.html?doc=' + encodeURIComponent(row.sourceId);
     case 'slide': return './slides.html?deck=' + encodeURIComponent(row.sourceId);
     case 'pdf': return './pdf-tools.html?file=' + encodeURIComponent(row.sourceId);
   }
@@ -141,7 +141,7 @@ function drawVersions() {
     const item = document.createElement('li');
     const description = document.createElement('span');
     description.textContent = record.name + ' · ' + new Date(record.updatedAt).toLocaleString();
-    const path = record.fileType === 'doc' ? './index.html' : './slides.html';
+    const path = record.fileType === 'doc' ? './docs.html' : './slides.html';
     item.append(description, makeLink('Open as new copy', path + '?version=' + encodeURIComponent(record.id)));
     return item;
   }));

@@ -1,5 +1,5 @@
-const CACHE_NAME = 'lumina-docs-shell-v16';
-const APP_SHELL = ['./', './index.html', './lumina-design.css', './lumina-design.js', './research-tools.js', './research-ui.js', './research-tools.css', './workspace.html', './workspace.css', './workspace.js', './library-store.js', './pdf-tools.html', './organize-pdf.html', './organize-pdf.css', './organize-pdf.js', './pdf-tools.js', './pdf-unlock-worker.js', './vendor/qpdf-0.3.0.js', './slides.html', './slides.css', './slides.js', './slide-canvas.js', './slide-canvas-ui.js', './vendor/pptxgen-3.12.0.min.js', './vendor/pdf-lib-1.17.1.min.js', './vendor/jszip-3.10.1.min.js', './accessibility.css', './accessibility.js', './lumina-storage.js', './vendor/lucide-1.79.0.min.js', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
+const CACHE_NAME = 'lumina-docs-shell-v17';
+const APP_SHELL = ['./', './index.html', './docs.html', './home.css', './home.js', './lumina-design.css', './lumina-design.js', './research-tools.js', './research-ui.js', './research-tools.css', './workspace.html', './workspace.css', './workspace.js', './library-store.js', './pdf-tools.html', './organize-pdf.html', './organize-pdf.css', './organize-pdf.js', './pdf-tools.js', './pdf-unlock-worker.js', './vendor/qpdf-0.3.0.js', './slides.html', './slides.css', './slides.js', './slide-canvas.js', './slide-canvas-ui.js', './vendor/pptxgen-3.12.0.min.js', './vendor/pdf-lib-1.17.1.min.js', './vendor/jszip-3.10.1.min.js', './accessibility.css', './accessibility.js', './lumina-storage.js', './vendor/lucide-1.79.0.min.js', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 const CDN_HOSTS = new Set(['cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com', 'www.gstatic.com']);
 
 self.addEventListener('install', event => {
@@ -32,8 +32,11 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
   if (url.origin === self.location.origin) {
     if (request.mode === 'navigate') {
-      const page = url.pathname.split('/').pop();
-      const shellPage = ['pdf-tools.html', 'slides.html', 'workspace.html', 'organize-pdf.html'].includes(page) ? './' + page : './index.html';
+      const scope = new URL(self.registration.scope).pathname;
+      const relativePath = url.pathname.startsWith(scope) ? url.pathname.slice(scope.length) : null;
+      const shellPage = relativePath === '' ? './index.html'
+        : ['index.html', 'docs.html', 'pdf-tools.html', 'slides.html', 'workspace.html', 'organize-pdf.html'].includes(relativePath) ? './' + relativePath : null;
+      if (!shellPage) return;
       event.respondWith((async () => {
         try {
           const response = await fetch(request);

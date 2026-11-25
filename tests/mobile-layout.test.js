@@ -4,7 +4,7 @@ const path = require('node:path');
 const test = require('node:test');
 
 const root = path.resolve(__dirname, '..');
-const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const html = fs.readFileSync(path.join(root, 'docs.html'), 'utf8');
 const css = fs.readFileSync(path.join(root, 'accessibility.css'), 'utf8');
 
 test('phone header keeps secondary actions in one accessible menu', () => {

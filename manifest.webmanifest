@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Lumina Docs \u2014 Medical PG Thesis Suite",
+  "name": "Lumina Docs",
   "short_name": "Lumina Docs",
-  "description": "A browser-based word processor and Medical PG thesis workspace.",
+  "description": "Write documents, build presentations, and organize PDFs in one workspace.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
