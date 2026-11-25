@@ -88,6 +88,7 @@ function draw() {
     actions.className = 'file-actions';
     actions.append(makeButton('Organize', () => showSettings(row)));
     if (row.kind !== 'pdf') actions.append(makeButton('Versions', () => showHistory(row)));
+    if (row.kind === 'pdf') actions.append(makeLink('Organize pages', './organize-pdf.html?file=' + encodeURIComponent(row.sourceId)));
     if (row.kind === 'pdf') actions.append(makeButton('Remove from library', async () => {
       if (!window.confirm('Remove the saved copy of ' + row.title + ' from this library?')) return;
       await LuminaLibrary.remove(row.key);

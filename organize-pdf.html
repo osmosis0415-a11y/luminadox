@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; worker-src 'self' blob: https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net; img-src 'self' data: blob:; style-src 'self'; font-src 'self' blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Organize PDF · Lumina Docs</title>
+  <link rel="stylesheet" href="./organize-pdf.css">
+  <script defer src="./library-store.js"></script>
+  <script defer src="./vendor/pdf-lib-1.17.1.min.js"></script>
+  <script defer src="./organize-pdf.js"></script>
+</head>
+<body>
+  <header><nav><a href="./workspace.html">Workspace</a><a href="./pdf-tools.html">PDF Tools</a></nav></header>
+  <main>
+    <h1>Organize PDF pages</h1>
+    <p>Drag pages or use the move buttons to put them in order. Changes are saved to a new PDF. Removing pages can discard document-level bookmarks and interactive forms.</p>
+    <label class="file-picker">Choose a PDF <input id="source-file" type="file" accept=".pdf,application/pdf"></label>
+    <p id="document-name"></p>
+    <fieldset id="controls" disabled>
+      <legend>Page actions</legend>
+      <button id="select-all">Select all</button>
+      <button id="rotate">Rotate selected</button>
+      <button id="delete">Remove selected</button>
+      <button id="undo">Undo</button>
+      <button id="export" class="primary">Download PDF</button>
+    </fieldset>
+    <p id="status" role="status"></p>
+    <ol id="pages" aria-label="PDF page order"></ol>
+  </main>
+</body>
+</html>
