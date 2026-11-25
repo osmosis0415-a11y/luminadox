@@ -9,7 +9,6 @@ const themes = {
 const layouts = ['cover', 'text', 'bullets', 'image'];
 const effects = { none: '', fade: '<p:fade/>', push: '<p:push dir="l"/>', wipe: '<p:wipe dir="l"/>' };
 const durations = { fast: '220ms', med: '450ms', slow: '750ms' };
-const storageKey = 'lumina_slides_v1';
 
 function newSlide() {
   return { title: '', body: '', notes: '', layout: 'text', theme: 'ink', transition: 'none', speed: 'med', image: '', imageDescription: '' };
@@ -101,6 +100,11 @@ if (typeof document !== 'undefined') {
     title: 'Untitled presentation',
     slides: [{ ...newSlide(), title: 'Your presentation starts here', body: 'Add a title, pick a theme, and make it yours.', layout: 'cover' }]
   };
+  const params = new URLSearchParams(location.search);
+  const requestedDeck = params.get('deck');
+  const versionId = params.get('version');
+  const deckId = versionId ? crypto.randomUUID() : /^[a-zA-Z0-9_-]{1,80}$/.test(requestedDeck || '') ? requestedDeck : 'original';
+  const storageKey = LuminaLibrary.deckKey(deckId);
   let active = 0;
   let presenting = 0;
   let message = 'Stored in this browser';
@@ -113,7 +117,7 @@ if (typeof document !== 'undefined') {
 
   function save() {
     try {
-      localStorage.setItem(storageKey, JSON.stringify(deck));
+      localStorage.setItem(storageKey, JSON.stringify({ ...deck, updatedAt: Date.now() }));
       el('save-status').textContent = 'Saved on this device';
     } catch {
       el('save-status').textContent = 'Device storage is full or unavailable. Save an editable copy to keep your changes.';
@@ -374,6 +378,24 @@ if (typeof document !== 'undefined') {
     }
   };
 
-  render();
+  async function initialize() {
+    if (versionId) {
+      try {
+        const version = await LuminaLibrary.get(versionId);
+        if (version?.fileType !== 'slide') throw new Error('Missing version');
+        deck = normalizeDeck(version.value);
+        deck.title = (deck.title || 'Presentation').slice(0, 80) + ' (version copy)';
+        history.replaceState(null, '', './slides.html?deck=' + encodeURIComponent(deckId));
+        save();
+      } catch {
+        el('save-status').textContent = 'Could not open that version.';
+      }
+    } else if (deckId !== 'original' && message === 'Stored in this browser') {
+      try { if (!localStorage.getItem(storageKey)) save(); } catch {}
+    }
+    render();
+  }
+
   el('save-status').textContent = message;
+  initialize();
 }

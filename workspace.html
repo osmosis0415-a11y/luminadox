@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Workspace · Lumina Docs</title>
+  <link rel="stylesheet" href="./workspace.css">
+  <script src="./lumina-storage.js" defer></script>
+  <script src="./library-store.js" defer></script>
+  <script src="./workspace.js" defer></script>
+</head>
+<body>
+  <header><a href="./index.html">Lumina Docs</a><a href="./slides.html">Slides</a><a href="./pdf-tools.html">PDF Tools</a></header>
+  <main>
+    <h1>Workspace</h1>
+    <p>Find your documents, decks, and saved PDFs on this device.</p>
+    <nav aria-label="Create or import" class="tools">
+      <a href="./index.html?new=blank">New document</a>
+      <a href="./index.html?new=thesis">New thesis</a>
+      <button id="new-deck">New slide deck</button>
+      <label class="file-button">Add PDFs<input id="pdfs" type="file" accept=".pdf,application/pdf" multiple></label>
+    </nav>
+    <div class="filters">
+      <label>Search files<input id="search" type="search" placeholder="Title, folder, or tags"></label>
+      <label>File type<select id="type"><option value="">All files</option><option value="doc">Documents</option><option value="slide">Slide decks</option><option value="pdf">PDFs</option></select></label>
+      <label>Folder<select id="folder"><option value="">All folders</option></select></label>
+      <label>Sort<select id="sort"><option value="recent">Most recent</option><option value="title">Title</option></select></label>
+      <label class="check"><input id="favorites" type="checkbox"> Favorites</label>
+    </div>
+    <p id="status" role="status"></p>
+    <ul id="files" aria-label="Workspace files"></ul>
+  </main>
+  <dialog id="settings">
+    <form id="settings-form">
+      <h2 id="settings-title">Organize file</h2>
+      <label>Folder<input id="edit-folder" maxlength="100"></label>
+      <label>Tags<input id="edit-tags" maxlength="240" placeholder="Separate tags with commas"></label>
+      <label class="check"><input id="edit-favorite" type="checkbox"> Favorite</label>
+      <div class="tools"><button type="submit">Save</button><button type="button" id="cancel-settings">Cancel</button></div>
+    </form>
+  </dialog>
+  <dialog id="history">
+    <section>
+      <h2>Version history</h2>
+      <p>Save a named checkpoint or open an earlier checkpoint as a new copy.</p>
+      <form id="version-form">
+        <label>Version name<input id="version-name" maxlength="80" required></label>
+        <button type="submit">Save checkpoint</button>
+      </form>
+      <ul id="versions"></ul>
+      <button id="close-history">Close</button>
+    </section>
+  </dialog>
+</body>
+</html>

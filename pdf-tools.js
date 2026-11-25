@@ -194,6 +194,7 @@ if (typeof document !== 'undefined') {
   const status = field('status');
   const form = field('pdf-form');
   let resultUrl;
+  let savedPdf;
 
   function clearResult() {
     if (resultUrl) URL.revokeObjectURL(resultUrl);
@@ -227,12 +228,18 @@ if (typeof document !== 'undefined') {
     field('password-controls').hidden = tool !== 'unlock';
     field('password').required = tool === 'unlock';
     field('password').value = '';
+    if (savedPdf && !images && !text) {
+      const transfer = new DataTransfer();
+      transfer.items.add(savedPdf);
+      files.files = transfer.files;
+    }
     showFileOrder();
     clearResult();
   }
 
   operation.addEventListener('change', updateControls);
   files.addEventListener('change', () => {
+    savedPdf = undefined;
     clearResult();
     showFileOrder();
   });
@@ -290,4 +297,14 @@ if (typeof document !== 'undefined') {
   });
 
   updateControls();
+  const libraryFile = new URLSearchParams(location.search).get('file');
+  if (libraryFile) {
+    LuminaLibrary.get(libraryFile).then(record => {
+      if (record?.kind !== 'pdf' || !(record.file instanceof Blob)) throw new Error('File missing.');
+      savedPdf = new File([record.file], record.title, { type: 'application/pdf' });
+      operation.value = 'view';
+      updateControls();
+      status.textContent = record.title + ' selected. Process the file to open it.';
+    }).catch(() => { status.textContent = 'Could not open the saved PDF.'; });
+  }
 }
