@@ -1,5 +1,5 @@
-const CACHE_NAME = 'lumina-docs-shell-v9';
-const APP_SHELL = ['./', './index.html', './pdf-tools.html', './pdf-tools.js', './vendor/pdf-lib-1.17.1.min.js', './vendor/jszip-3.10.1.min.js', './accessibility.css', './accessibility.js', './lumina-storage.js', './vendor/lucide-1.79.0.min.js', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
+const CACHE_NAME = 'lumina-docs-shell-v10';
+const APP_SHELL = ['./', './index.html', './pdf-tools.html', './pdf-tools.js', './slides.html', './slides.css', './slides.js', './vendor/pptxgen-3.12.0.min.js', './vendor/pdf-lib-1.17.1.min.js', './vendor/jszip-3.10.1.min.js', './accessibility.css', './accessibility.js', './lumina-storage.js', './vendor/lucide-1.79.0.min.js', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 const CDN_HOSTS = new Set(['cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com', 'www.gstatic.com']);
 
 self.addEventListener('install', event => {
@@ -32,7 +32,8 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
   if (url.origin === self.location.origin) {
     if (request.mode === 'navigate') {
-      const shellPage = url.pathname.endsWith('/pdf-tools.html') ? './pdf-tools.html' : './index.html';
+      const page = url.pathname.split('/').pop();
+      const shellPage = ['pdf-tools.html', 'slides.html'].includes(page) ? './' + page : './index.html';
       event.respondWith((async () => {
         try {
           const response = await fetch(request);

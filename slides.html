@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Slides · Lumina Docs</title>
+  <link rel="stylesheet" href="./slides.css">
+  <script src="./vendor/jszip-3.10.1.min.js" defer></script>
+  <script src="./vendor/pptxgen-3.12.0.min.js" defer></script>
+  <script src="./slides.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html">← Lumina Docs</a>
+    <label class="deck-name">Presentation <input id="deck-title" maxlength="100" value="Untitled presentation"></label>
+    <div class="actions"><button id="present" class="primary">Present</button><button id="export">Export PowerPoint</button></div>
+  </header>
+  <main class="workspace">
+    <aside class="sidebar" aria-label="Slide list">
+      <div class="panel-title"><h1>Slides</h1><button id="add">+ Add slide</button></div>
+      <ol id="slide-list"></ol>
+      <div class="slide-actions">
+        <button id="up" aria-label="Move slide up">↑</button>
+        <button id="down" aria-label="Move slide down">↓</button>
+        <button id="duplicate">Duplicate</button>
+        <button id="remove">Delete</button>
+      </div>
+    </aside>
+    <section class="stage" aria-label="Slide canvas">
+      <div id="canvas" class="slide"></div>
+      <p id="save-status" role="status"></p>
+      <label class="notes">Speaker notes<textarea id="notes" rows="3" maxlength="5000" placeholder="What will you say on this slide?"></textarea></label>
+    </section>
+    <section class="inspector" aria-label="Slide settings">
+      <h2>Edit slide</h2>
+      <label>Title <input id="slide-title" maxlength="180"></label>
+      <label>Content <textarea id="slide-body" rows="5" maxlength="3000"></textarea></label>
+      <div class="options">
+        <label>Layout
+          <select id="layout"><option value="cover">Title slide</option><option value="text">Title and text</option><option value="bullets">Bullet list</option><option value="image">Text and image</option></select>
+        </label>
+        <label>Theme
+          <select id="theme"><option value="ink">Midnight</option><option value="paper">Paper</option><option value="forest">Forest</option><option value="coral">Coral</option></select>
+        </label>
+        <label>Transition into slide
+          <select id="transition"><option value="none">None</option><option value="fade">Fade</option><option value="push">Push left</option><option value="wipe">Wipe left</option></select>
+        </label>
+        <label>Speed
+          <select id="speed"><option value="fast">Fast</option><option value="med">Medium</option><option value="slow">Slow</option></select>
+        </label>
+      </div>
+      <div id="image-controls" hidden>
+        <label>Slide image <input id="image-file" type="file" accept="image/png,image/jpeg"></label>
+        <label>Image description <input id="image-description" maxlength="250"></label>
+        <button id="clear-image">Remove image</button>
+      </div>
+      <button id="apply-theme">Apply theme to all slides</button>
+      <div class="file-actions"><button id="backup">Save editable copy</button><label class="file-button">Open editable copy<input type="file" id="restore" accept=".json,application/json"></label></div>
+    </section>
+  </main>
+  <dialog id="show" aria-label="Slide presentation">
+    <div id="show-slide" class="slide"></div>
+    <nav class="show-controls" aria-label="Presentation controls">
+      <button id="previous">Previous</button><span id="counter" aria-live="polite"></span><button id="next">Next</button><button id="toggle-notes" aria-expanded="false">Notes</button><button id="exit">Exit</button>
+    </nav>
+    <p id="present-notes" hidden></p>
+  </dialog>
+</body>
+</html>
