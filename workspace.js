@@ -205,3 +205,46 @@ refresh().catch(error => status('Could not load the workspace. ' + error.message
 window.addEventListener('pageshow', event => {
   if (event.persisted) refresh().catch(error => status(error.message));
 });
+
+function backupBusy(active) {
+  el('backup-workspace').disabled = active;
+  el('restore-workspace').disabled = active;
+}
+el('backup-workspace').onclick = async () => {
+  backupBusy(true);
+  status('Creating workspace backup…');
+  try {
+    const [documents, library] = await Promise.all([docs.load(), LuminaLibrary.all()]);
+    const bytes = await WorkspaceBackup.pack(window.JSZip, documents, LuminaLibrary.readDecks(localStorage), library);
+    const url = URL.createObjectURL(new Blob([bytes],{type:'application/zip'}));
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'lumina-workspace-' + new Date().toISOString().slice(0,10) + '.zip';
+    anchor.click();
+    setTimeout(() => URL.revokeObjectURL(url),30000);
+    status('Backup ready. It contains a copy of your saved files and checkpoints.');
+  } catch (error) { status('Could not create backup. ' + error.message); }
+  finally { backupBusy(false); }
+};
+el('restore-workspace').onchange = async event => {
+  const file = event.target.files[0];
+  event.target.value = '';
+  if (!file) return;
+  backupBusy(true);
+  status('Checking the backup…');
+  try {
+    if (file.size > 257 * 1024 * 1024) throw Error('Choose a Lumina backup under 257 MB.');
+    const plan = await WorkspaceBackup.unpack(window.JSZip, await file.arrayBuffer(), () => crypto.randomUUID());
+    const pdfs = plan.records.filter(item=>item.kind==='pdf').length;
+    const versions = plan.records.filter(item=>item.kind==='version').length;
+    const summary = plan.documents.length + ' documents, ' + plan.decks.length + ' decks, ' + pdfs + ' PDFs, and ' + versions + ' checkpoints';
+    if (!window.confirm('Restore ' + summary + ' as new copies on this device?')) {
+      status('Restore canceled.');
+      return;
+    }
+    await WorkspaceBackup.restore(plan,{documents:docs,library:LuminaLibrary,storage:localStorage});
+    await refresh();
+    status('Restored ' + summary + '.');
+  } catch (error) { status('Could not restore backup. ' + error.message); }
+  finally { backupBusy(false); }
+};

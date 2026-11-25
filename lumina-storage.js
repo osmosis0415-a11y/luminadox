@@ -97,6 +97,29 @@
       catch { return 'memory'; }
     }
 
+    async function addCopies(copies) {
+      if (!copies.length) return;
+      const conn = await db();
+      if (conn) {
+        const tx = conn.transaction(DOCS, 'readwrite');
+        const store = tx.objectStore(DOCS);
+        if ((await request(store.count())) === 0) {
+          let existing;
+          try { existing = JSON.parse(fallback?.getItem(legacyKey) || '[]'); } catch {}
+          if (Array.isArray(existing)) for (const doc of existing) if (doc?.id) store.put(doc);
+        }
+        for (const doc of copies) store.add(doc);
+        await transactionDone(tx);
+        try { fallback?.removeItem(legacyKey); } catch {}
+        return;
+      }
+      if (!fallback) throw new Error('This browser could not store documents.');
+      const existing = await load();
+      const ids = new Set(existing.map(doc => doc.id));
+      if (copies.some(doc => ids.has(doc.id))) throw new Error('A restored document ID already exists.');
+      fallback.setItem(legacyKey, JSON.stringify([...existing,...copies]));
+    }
+
     async function enqueue(op) {
       const docId = op?.docId || op?.document?.id;
       if (!docId) return false;
@@ -144,7 +167,7 @@
       await transactionDone(tx);
     }
 
-    return { load, saveAll, enqueue, pending, acknowledge };
+    return { load, saveAll, addCopies, enqueue, pending, acknowledge };
   }
 
   return { create, mergeDocuments, outboxKey };

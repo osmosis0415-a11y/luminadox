@@ -51,6 +51,8 @@ const LuminaLibrary = (() => {
     readDecks,
     get: id => transact('readonly', store => store.get(id)),
     all: () => transact('readonly', store => store.getAll()),
+    addMany: records => transact('readwrite', store => records.map(record => store.add(record)).at(-1)),
+    removeMany: ids => transact('readwrite', store => ids.map(id => store.delete(id)).at(-1)),
     put: record => transact('readwrite', store => store.put(record)),
     remove: id => transact('readwrite', store => store.delete(id))
   };

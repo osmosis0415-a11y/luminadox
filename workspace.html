@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="./workspace.css">
   <script src="./lumina-storage.js" defer></script>
   <script src="./library-store.js" defer></script>
+  <script src="./vendor/jszip-3.10.1.min.js" defer></script>
+  <script src="./workspace-backup.js" defer></script>
   <script src="./workspace.js" defer></script>
   <link rel="stylesheet" href="./lumina-design.css">
   <script src="./vendor/lucide-1.79.0.min.js" defer></script>
@@ -38,6 +40,10 @@
     </section>
     <section class="workspace-library" aria-labelledby="library-title">
     <h2 id="library-title">Your files</h2>
+    <div class="tools" aria-label="Workspace backup">
+      <button type="button" id="backup-workspace">Download workspace backup</button>
+      <label class="file-button">Restore from backup<input id="restore-workspace" type="file" accept=".zip,application/zip"></label>
+    </div>
     <p><a href="./data.html">Open data workspace</a></p>
     <div class="filters">
       <label>Search files<input id="search" type="search" placeholder="Title, folder, or tags"></label>
