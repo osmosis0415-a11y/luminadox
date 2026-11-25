@@ -164,6 +164,26 @@ async function buildPdfResult(library, zipLibrary, operation, files, options) {
   return finish(pdf);
 }
 
+function decryptPdf(bytes, password) {
+  return new Promise((resolve, reject) => {
+    const worker = new Worker('./pdf-unlock-worker.js');
+    const finish = (error, output) => {
+      clearTimeout(timeout);
+      worker.terminate();
+      if (error) reject(new Error(error));
+      else resolve(output);
+    };
+    const timeout = setTimeout(() => finish('Password removal timed out. Check your connection and try again.'), 45000);
+    worker.onmessage = ({ data }) => finish(data.error, data.output);
+    worker.onerror = () => finish('Could not start the PDF password tool.');
+    try {
+      worker.postMessage({ bytes, password }, [bytes]);
+    } catch {
+      finish('Could not read the selected PDF.');
+    }
+  });
+}
+
 if (typeof module !== 'undefined') module.exports = { selectPages, buildPdfResult };
 
 if (typeof document !== 'undefined') {
@@ -204,6 +224,9 @@ if (typeof document !== 'undefined') {
     field('margin').disabled = tool !== 'crop';
     field('watermark-controls').hidden = tool !== 'watermark';
     field('watermark').required = tool === 'watermark';
+    field('password-controls').hidden = tool !== 'unlock';
+    field('password').required = tool === 'unlock';
+    field('password').value = '';
     showFileOrder();
     clearResult();
   }
@@ -222,7 +245,7 @@ if (typeof document !== 'undefined') {
     clearResult();
     const selectedFiles = [...files.files];
     const tool = operation.value;
-    if (tool !== 'view' && !window.PDFLib) {
+    if (!['view', 'unlock'].includes(tool) && !window.PDFLib) {
       status.textContent = 'The PDF library could not load. Reload PDF Tools and try again.';
       return;
     }
@@ -236,7 +259,18 @@ if (typeof document !== 'undefined') {
     controls.forEach(control => { control.disabled = true; });
     status.textContent = 'Processing files…';
     try {
-      const result = await buildPdfResult(window.PDFLib, window.JSZip, tool, selectedFiles, options);
+      let result;
+      if (tool === 'unlock') {
+        const password = field('password').value;
+        field('password').value = '';
+        result = {
+          bytes: await decryptPdf(await selectedFiles[0].arrayBuffer(), password),
+          type: 'application/pdf',
+          filename: selectedFiles[0].name.replace(/\.pdf$/i, '') + '-unlocked.pdf'
+        };
+      } else {
+        result = await buildPdfResult(window.PDFLib, window.JSZip, tool, selectedFiles, options);
+      }
       resultUrl = URL.createObjectURL(new Blob([result.bytes], { type: result.type }));
       const download = field('download');
       download.href = resultUrl;

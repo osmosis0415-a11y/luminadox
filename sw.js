@@ -1,5 +1,5 @@
-const CACHE_NAME = 'lumina-docs-shell-v10';
-const APP_SHELL = ['./', './index.html', './pdf-tools.html', './pdf-tools.js', './slides.html', './slides.css', './slides.js', './vendor/pptxgen-3.12.0.min.js', './vendor/pdf-lib-1.17.1.min.js', './vendor/jszip-3.10.1.min.js', './accessibility.css', './accessibility.js', './lumina-storage.js', './vendor/lucide-1.79.0.min.js', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
+const CACHE_NAME = 'lumina-docs-shell-v11';
+const APP_SHELL = ['./', './index.html', './pdf-tools.html', './pdf-tools.js', './pdf-unlock-worker.js', './vendor/qpdf-0.3.0.js', './slides.html', './slides.css', './slides.js', './vendor/pptxgen-3.12.0.min.js', './vendor/pdf-lib-1.17.1.min.js', './vendor/jszip-3.10.1.min.js', './accessibility.css', './accessibility.js', './lumina-storage.js', './vendor/lucide-1.79.0.min.js', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 const CDN_HOSTS = new Set(['cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com', 'www.gstatic.com']);
 
 self.addEventListener('install', event => {

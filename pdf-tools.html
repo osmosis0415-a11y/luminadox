@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; worker-src 'self'; style-src 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>PDF Tools · Lumina Docs</title>
   <style>
     :root { color-scheme: light dark; font-family: system-ui,sans-serif; color: #19213b; background: #f3f5ff; --surface: #fff; --line:#b1bbd3; --accent:#4338ca; }
@@ -54,6 +54,9 @@
           <option value="flatten">Flatten form fields</option>
           <option value="view">Open PDF viewer</option>
         </optgroup>
+        <optgroup label="Security">
+          <option value="unlock">Remove PDF password</option>
+        </optgroup>
         <optgroup label="Convert">
           <option value="images">JPG / PNG to PDF</option>
           <option value="text">Plain text to PDF</option>
@@ -75,6 +78,10 @@
     </label>
     <label id="watermark-controls" hidden>Watermark text
       <input id="watermark" type="text" maxlength="100">
+    </label>
+    <label id="password-controls" hidden>Current PDF password
+      <input id="password" type="password" autocomplete="off" aria-describedby="password-help">
+      <span id="password-help">Use the password for a PDF you have permission to unlock. The downloaded copy will open without a password. The tool downloads its processing engine when needed.</span>
     </label>
     <button id="run" type="submit">Process files</button>
     <p id="status" role="status"></p>
