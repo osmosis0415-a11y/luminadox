@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="light"><head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Lumina Docs — Medical PG Thesis &amp; Word Processor</title>
     <!-- Installable Web App (PWA) Meta Tags -->
     <meta name="description" content="Distraction-free word processor and Medical PG (MD/MS/DNB) thesis suite with Vancouver citations, PubMed lookup, and optional AI Co-Pilot.">
@@ -399,6 +399,21 @@
             color: #a5b4fc;
         }
 
+        #formatting-ribbon, #formatting-ribbon > div {
+            flex-wrap: wrap;
+            align-content: flex-start;
+        }
+        #formatting-ribbon { max-height: 35vh; overflow-y: auto; }
+        #formatting-ribbon > div { max-width: 100%; }
+        #formatting-ribbon [hidden] { display: none !important; }
+        #status-footer { flex-wrap: wrap; row-gap: 0.25rem; }
+        @media (pointer: coarse) {
+            #formatting-ribbon button, #formatting-ribbon .tb-btn {
+                min-width: 44px;
+                min-height: 44px;
+            }
+        }
+
         /* Mobile & Tablet Touch Enhancements */
         .no-scrollbar {
             -ms-overflow-style: none;
@@ -417,7 +432,7 @@
                 justify-content: center;
             }
             #formatting-ribbon select {
-                min-height: 38px;
+                min-height: 44px;
                 font-size: 13px;
             }
         }
@@ -636,7 +651,8 @@
     </header>
 
     <!-- ==================== FORMATTING RIBBON ==================== -->
-    <div id="formatting-ribbon" class="no-scrollbar bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200 dark:border-slate-800 px-2 sm:px-3 py-1.5 flex items-center gap-1 overflow-x-auto shrink-0 z-20">
+    <div id="formatting-ribbon" role="group" aria-label="Document formatting" class="bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200 dark:border-slate-800 px-2 sm:px-3 py-1.5 flex items-center gap-1 shrink-0 z-20">
+        <button id="more-tools" type="button" aria-expanded="false" class="shrink-0 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-200" onpointerdown="event.preventDefault()" onclick="toggleMoreTools()">More tools</button>
         <!-- Undo / Redo -->
         <div class="flex items-center gap-0.5 pr-1.5 border-r border-slate-200 dark:border-slate-700 shrink-0">
             <button onpointerdown="event.preventDefault()" onclick="execCmd('undo')" title="Undo (Ctrl+Z)" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
@@ -659,7 +675,7 @@
             </select>
 
             <!-- Font Family -->
-            <select id="font-family" onchange="applyFontFamily(this.value)" title="Font Family" class="phone-advanced-select text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 cursor-pointer">
+            <select data-more-tool hidden id="font-family" onchange="applyFontFamily(this.value)" title="Font Family" class="text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 cursor-pointer">
                 <option value="'Times New Roman', Times, serif">Times New Roman (Thesis)</option>
                 <option value="Inter, sans-serif" selected="">Inter (Sans)</option>
                 <option value="Merriweather, serif">Merriweather (Serif)</option>
@@ -668,7 +684,7 @@
             </select>
 
             <!-- Font Size -->
-            <select id="font-size" onchange="execCmd('fontSize', this.value)" title="Font Size" class="phone-advanced-select text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-1.5 py-1.5 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 cursor-pointer">
+            <select data-more-tool hidden id="font-size" onchange="execCmd('fontSize', this.value)" title="Font Size" class="text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-1.5 py-1.5 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 cursor-pointer">
                 <option value="2">Small</option>
                 <option value="3" selected="">Normal</option>
                 <option value="4">Medium</option>
@@ -677,7 +693,7 @@
             </select>
 
             <!-- Line Spacing (Thesis Standard) -->
-            <select id="line-spacing" onchange="applyLineSpacing(this.value)" title="Line Spacing" class="phone-advanced-select text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-1.5 py-1.5 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 cursor-pointer">
+            <select data-more-tool hidden id="line-spacing" onchange="applyLineSpacing(this.value)" title="Line Spacing" class="text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-1.5 py-1.5 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 cursor-pointer">
                 <option value="1.15">1.15x</option>
                 <option value="1.5">1.5x</option>
                 <option value="1.75" selected="">1.75x</option>
@@ -696,41 +712,41 @@
             <button id="btn-underline" onpointerdown="event.preventDefault()" onclick="execCmd('underline')" title="Underline (Ctrl+U)" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="underline" class="w-4 h-4"></i>
             </button>
-            <button id="btn-strike" onpointerdown="event.preventDefault()" onclick="execCmd('strikeThrough')" title="Strikethrough" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden id="btn-strike" onpointerdown="event.preventDefault()" onclick="execCmd('strikeThrough')" title="Strikethrough" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="strikethrough" class="w-4 h-4"></i>
             </button>
-            <button id="btn-superscript" onpointerdown="event.preventDefault()" onclick="execCmd('superscript')" title="Superscript" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden id="btn-superscript" onpointerdown="event.preventDefault()" onclick="execCmd('superscript')" title="Superscript" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="superscript" class="w-4 h-4"></i>
             </button>
-            <button id="btn-subscript" onpointerdown="event.preventDefault()" onclick="execCmd('subscript')" title="Subscript" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden id="btn-subscript" onpointerdown="event.preventDefault()" onclick="execCmd('subscript')" title="Subscript" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="subscript" class="w-4 h-4"></i>
             </button>
 
             <!-- Text Color -->
-            <label title="Text Color" class="tb-btn relative p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 cursor-pointer flex items-center justify-center transition">
+            <label data-more-tool hidden title="Text Color" class="tb-btn relative p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 cursor-pointer flex items-center justify-center transition">
                 <i data-lucide="baseline" class="w-4 h-4"></i>
                 <input type="color" value="#4f46e5" onchange="execCmd('foreColor', this.value)" class="opacity-0 absolute inset-0 w-full h-full cursor-pointer">
             </label>
 
             <!-- Highlight Color -->
-            <label title="Highlight Color" class="tb-btn relative p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 cursor-pointer flex items-center justify-center transition">
+            <label data-more-tool hidden title="Highlight Color" class="tb-btn relative p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 cursor-pointer flex items-center justify-center transition">
                 <i data-lucide="highlighter" class="w-4 h-4"></i>
                 <input type="color" value="#fef08a" onchange="execCmd('hiliteColor', this.value)" class="opacity-0 absolute inset-0 w-full h-full cursor-pointer">
             </label>
         </div>
 
         <!-- Alignment -->
-        <div class="flex items-center gap-0.5 px-1.5 border-r border-slate-200 dark:border-slate-700 shrink-0">
-            <button onpointerdown="event.preventDefault()" onclick="execCmd('justifyLeft')" title="Align Left" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+        <div data-more-tool hidden class="flex items-center gap-0.5 px-1.5 border-r border-slate-200 dark:border-slate-700 shrink-0">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="execCmd('justifyLeft')" title="Align Left" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="align-left" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="execCmd('justifyCenter')" title="Align Center" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="execCmd('justifyCenter')" title="Align Center" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="align-center" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="execCmd('justifyRight')" title="Align Right" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="execCmd('justifyRight')" title="Align Right" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="align-right" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="execCmd('justifyFull')" title="Justify" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="execCmd('justifyFull')" title="Justify" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="align-justify" class="w-4 h-4"></i>
             </button>
         </div>
@@ -743,65 +759,65 @@
             <button onpointerdown="event.preventDefault()" onclick="execCmd('insertOrderedList')" title="Numbered List" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="list-ordered" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="insertChecklistItem()" title="Insert Checklist Item" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="insertChecklistItem()" title="Insert Checklist Item" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="check-square" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="execCmd('outdent')" title="Decrease Indent" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="execCmd('outdent')" title="Decrease Indent" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="outdent" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="execCmd('indent')" title="Increase Indent" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="execCmd('indent')" title="Increase Indent" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="indent" class="w-4 h-4"></i>
             </button>
         </div>
 
         <!-- Insert Objects -->
-        <div class="flex items-center gap-0.5 pl-1.5 shrink-0">
-            <button onpointerdown="event.preventDefault()" onclick="openModal('link-modal')" title="Insert Link" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+        <div data-more-tool hidden class="flex items-center gap-0.5 pl-1.5 shrink-0">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="openModal('link-modal')" title="Insert Link" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="link" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="openModal('image-modal')" title="Insert Image" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="openModal('image-modal')" title="Insert Image" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="image" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="openModal('table-modal')" title="Insert Table" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="openModal('table-modal')" title="Insert Table" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="table" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="openModal('footnote-modal')" title="Insert Footnote" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="openModal('footnote-modal')" title="Insert Footnote" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="bookmark-plus" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="openCitationsTab()" title="Citations &amp; Bibliography" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="openCitationsTab()" title="Citations &amp; Bibliography" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="book-open" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="openModal('med-symbols-modal')" title="Medical Symbols &amp; Stats (±, χ², p&lt;0.05)" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-emerald-600 dark:text-emerald-400 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="openModal('med-symbols-modal')" title="Medical Symbols &amp; Stats (±, χ², p&lt;0.05)" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-emerald-600 dark:text-emerald-400 transition">
                 <i data-lucide="sigma" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="openModal('sample-size-modal')" title="Medical Sample Size Calculator" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-teal-600 dark:text-teal-400 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="openModal('sample-size-modal')" title="Medical Sample Size Calculator" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-teal-600 dark:text-teal-400 transition">
                 <i data-lucide="calculator" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="openModal('caption-modal')" title="Insert Figure / Table Caption" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="openModal('caption-modal')" title="Insert Figure / Table Caption" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="captions" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="openCommentModal()" title="Add Advisor / Review Comment" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="openCommentModal()" title="Add Advisor / Review Comment" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="message-square-plus" class="w-4 h-4"></i>
             </button>
-            <button id="btn-track-changes" onpointerdown="event.preventDefault()" onclick="toggleTrackChanges()" title="Track Changes (Guide Redlining Mode)" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sky-600 dark:text-sky-400 transition">
+            <button data-more-tool hidden id="btn-track-changes" onpointerdown="event.preventDefault()" onclick="toggleTrackChanges()" title="Track Changes (Guide Redlining Mode)" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sky-600 dark:text-sky-400 transition">
                 <i data-lucide="file-diff" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="insertPageBreak()" title="Insert Page Break" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="insertPageBreak()" title="Insert Page Break" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="separator-horizontal" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="insertSectionBreak()" title="Insert Section Break (Switch Roman i,ii to Arabic 1,2)" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-indigo-600 dark:text-indigo-400 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="insertSectionBreak()" title="Insert Section Break (Switch Roman i,ii to Arabic 1,2)" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-indigo-600 dark:text-indigo-400 transition">
                 <i data-lucide="split" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="openModal('page-setup-modal')" title="Page Setup, Running Header &amp; Binding Margins" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="openModal('page-setup-modal')" title="Page Setup, Running Header &amp; Binding Margins" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="panel-top" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="openPlagiarismScanner()" title="Plagiarism Prep: Uncited Claims, Repetition &amp; Clean Export" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-amber-600 dark:text-amber-400 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="openPlagiarismScanner()" title="Plagiarism Prep: Uncited Claims, Repetition &amp; Clean Export" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-amber-600 dark:text-amber-400 transition">
                 <i data-lucide="shield-check" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="execCmd('insertHorizontalRule')" title="Insert Divider" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="execCmd('insertHorizontalRule')" title="Insert Divider" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="minus" class="w-4 h-4"></i>
             </button>
-            <button onpointerdown="event.preventDefault()" onclick="execCmd('removeFormat')" title="Clear Formatting" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button data-more-tool hidden onpointerdown="event.preventDefault()" onclick="execCmd('removeFormat')" title="Clear Formatting" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="eraser" class="w-4 h-4"></i>
             </button>
         </div>
@@ -1088,6 +1104,7 @@
                     <div id="stat-goal-bar" class="h-full bg-indigo-500 rounded-full transition-all duration-300" style="width: 0%"></div>
                 </div>
             </button>
+            <span id="local-save-status" role="status" class="font-medium"></span>
             <span id="stat-chars" class="hidden sm:inline">0 characters</span>
             <span id="stat-reading" class="hidden md:inline">0 min read</span>
         </div>
@@ -1661,7 +1678,7 @@
 
         function initPwaInstallSupport() {
             // Register the static service worker used by GitHub Pages and other HTTPS hosts.
-            if ('serviceWorker' in navigator && location.protocol === 'https:') {
+            if ('serviceWorker' in navigator && window.isSecureContext && /^https?:$/.test(location.protocol)) {
                 navigator.serviceWorker.register(new URL('./sw.js', document.baseURI), { scope: new URL('./', document.baseURI).pathname })
                     .catch(err => console.warn('Offline support could not be enabled:', err));
             }
@@ -1879,14 +1896,31 @@
 
         const localDocumentStore = window.LuminaStorage?.create({ legacyKey: LOCAL_STORAGE_KEY });
 
-        async function saveToLocalCache() {
-            if (localDocumentStore) {
-                await localDocumentStore.saveAll(documents);
-                return;
-            }
-            try {
+        let localSaveVersion = 0;
+        let localWrites = Promise.resolve();
+
+        function setLocalSaveStatus(message) {
+            const status = document.getElementById('local-save-status');
+            if (status.textContent !== message) status.textContent = message;
+        }
+
+        function saveToLocalCache() {
+            const version = ++localSaveVersion;
+            setLocalSaveStatus('Saving on device…');
+            localWrites = localWrites.then(async () => {
+                if (localDocumentStore) return (await localDocumentStore.saveAll(documents)) !== 'memory';
                 localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(documents));
-            } catch (e) {}
+                return true;
+            }).catch(error => {
+                console.warn('Local save failed.', error);
+                return false;
+            });
+            return localWrites.then(saved => {
+                if (version === localSaveVersion && pendingDocumentSaves.size === 0) {
+                    setLocalSaveStatus(saved ? 'Saved on device' : 'Could not save on device');
+                }
+                return saved;
+            });
         }
 
         async function loadWorkspace() {
@@ -1918,17 +1952,21 @@
         }
 
         async function persistWorkspace(targetDoc = null) {
-            saveToLocalCache();
             const docToSave = targetDoc || documents.find(d => d.id === activeDocId);
-            if (docToSave) {
-                docToSave.lastEditedByDevice = DEVICE_SESSION_ID;
-                await localDocumentStore?.enqueue({ type: 'save', docId: docToSave.id, document: docToSave, updatedAt: Date.now() });
+            if (docToSave) docToSave.lastEditedByDevice = DEVICE_SESSION_ID;
+            const saved = await saveToLocalCache();
+            if (docToSave && documents.includes(docToSave)) {
+                try {
+                    await localDocumentStore?.enqueue({ type: 'save', docId: docToSave.id, document: docToSave, updatedAt: Date.now() });
+                } catch (error) {
+                    console.warn('Could not queue cloud save.', error);
+                }
                 if (window.CloudSync && window.CloudSync.isReady()) {
                     window.CloudSync.saveDocument(docToSave).then(() => window.CloudSync.flushOutbox?.());
                     return;
                 }
             }
-            showSaveIndicator('local');
+            if (saved) showSaveIndicator('local');
         }
 
         function updateSyncBadge(state, labelText) {
@@ -2326,6 +2364,8 @@
                 showToast('Cannot delete the only document.', 'error');
                 return;
             }
+            clearTimeout(pendingDocumentSaves.get(id));
+            pendingDocumentSaves.delete(id);
             documents = documents.filter(d => d.id !== id);
             saveToLocalCache();
             await localDocumentStore?.enqueue({ type: 'delete', docId: id, updatedAt: Date.now() });
@@ -2366,7 +2406,25 @@
             window.lucide?.createIcons?.();
         }
 
-        let saveTimeout;
+        const pendingDocumentSaves = new Map();
+
+        function flushDocumentSave(id) {
+            if (!pendingDocumentSaves.has(id)) return;
+            clearTimeout(pendingDocumentSaves.get(id));
+            pendingDocumentSaves.delete(id);
+            const doc = documents.find(entry => entry.id === id);
+            if (doc) persistWorkspace(doc);
+        }
+
+        function toggleMoreTools() {
+            const toggle = document.getElementById('more-tools');
+            const expanded = toggle.getAttribute('aria-expanded') !== 'true';
+            toggle.setAttribute('aria-expanded', String(expanded));
+            toggle.textContent = expanded ? 'Fewer tools' : 'More tools';
+            document.querySelectorAll('#formatting-ribbon [data-more-tool]').forEach(tool => {
+                tool.hidden = !expanded;
+            });
+        }
         function saveCurrentDocument() {
             const doc = documents.find(d => d.id === activeDocId);
             if (!doc) return;
@@ -2374,11 +2432,12 @@
             doc.content = editor.innerHTML;
             doc.updatedAt = Date.now();
             doc.lastEditedByDevice = DEVICE_SESSION_ID;
-            clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(() => {
-                persistWorkspace(doc);
+            setLocalSaveStatus('Saving on device…');
+            clearTimeout(pendingDocumentSaves.get(doc.id));
+            pendingDocumentSaves.set(doc.id, setTimeout(() => {
+                flushDocumentSave(doc.id);
                 renderDocumentsList();
-            }, 450);
+            }, 450));
         }
 
         function showSaveIndicator(state = 'synced') {
@@ -2389,6 +2448,14 @@
         // 4. EDITOR COMMANDS & SELECTION HANDLING
         // ==========================================
         function setupEditorListeners() {
+            const flushPendingSaves = () => {
+                for (const id of pendingDocumentSaves.keys()) flushDocumentSave(id);
+            };
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden') flushPendingSaves();
+            });
+            window.addEventListener('pagehide', flushPendingSaves);
+
             editor.addEventListener('input', () => {
                 saveCurrentDocument();
                 updateStats();

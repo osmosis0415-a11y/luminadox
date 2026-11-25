@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lumina-docs-shell-v7';
+const CACHE_NAME = 'lumina-docs-shell-v8';
 const APP_SHELL = ['./', './index.html', './accessibility.css', './accessibility.js', './lumina-storage.js', './vendor/lucide-1.79.0.min.js', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 const CDN_HOSTS = new Set(['cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com', 'www.gstatic.com']);
 

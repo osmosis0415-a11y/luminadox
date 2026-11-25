@@ -43,3 +43,8 @@ test('falls back to localStorage when IndexedDB is explicitly unavailable', asyn
   assert.equal(await store.saveAll([{ id: 'a' }]), 'localStorage');
   assert.deepEqual(await store.load(), [{ id: 'a' }]);
 });
+
+test('reports memory-only storage when no persistence backend is available', async () => {
+  const store = create({ indexedDB: null, localStorage: null });
+  assert.equal(await store.saveAll([{ id: 'a' }]), 'memory');
+});

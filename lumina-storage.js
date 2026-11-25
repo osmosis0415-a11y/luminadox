@@ -92,7 +92,8 @@
         try { fallback?.removeItem(legacyKey); } catch {}
         return 'indexeddb';
       }
-      try { fallback?.setItem(legacyKey, JSON.stringify(docs || [])); return 'localStorage'; }
+      if (!fallback) return 'memory';
+      try { fallback.setItem(legacyKey, JSON.stringify(docs || [])); return 'localStorage'; }
       catch { return 'memory'; }
     }
 
