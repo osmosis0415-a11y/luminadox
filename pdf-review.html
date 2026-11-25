@@ -1,0 +1,27 @@
+<!doctype html><html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval';worker-src 'self' blob: https://cdn.jsdelivr.net;connect-src 'self' https://cdn.jsdelivr.net;style-src 'self' 'unsafe-inline';img-src 'self' data: blob:;font-src 'self' data: blob:;object-src 'none';base-uri 'none';form-action 'none'">
+<title>Review PDF · Lumina Docs</title>
+<link rel="stylesheet" href="./lumina-design.css"><link rel="stylesheet" href="./pdf-review.css">
+<script src="./vendor/pdf-lib-1.17.1.min.js" defer></script><script src="./library-store.js" defer></script><script src="./pdf-review.js" defer></script>
+</head>
+<body class="lumina-app">
+<header class="lumina-shell"><div class="lumina-shell-inner"><a class="lumina-brand" href="./"><span class="lumina-mark" aria-hidden="true">L</span>Lumina Docs</a><nav class="lumina-nav" aria-label="App navigation"><a href="./workspace.html">Workspace</a><a href="./pdf-tools.html">PDF Tools</a></nav></div></header>
+<main class="review-screen">
+  <h1 class="screen-title">Review and scan PDFs</h1>
+  <p class="screen-intro">Highlight a region, add page notes, or make scanned English text searchable. Files are processed on this device. Preview and OCR engines load from the internet.</p>
+  <label>Open PDF <input id="review-file" type="file" accept=".pdf,application/pdf"></label>
+  <fieldset id="review-controls" disabled><legend>PDF actions</legend>
+    <button id="page-before">Previous</button><span id="page-counter"></span><button id="page-after">Next</button>
+    <button id="highlight-mode" aria-pressed="false">Highlight region</button><button id="ocr-page">OCR this page</button><button id="ocr-all">OCR all pages</button>
+    <button id="review-download">Download PDF copy</button>
+  </fieldset>
+  <p id="review-status" role="status"></p>
+  <div id="review-body" hidden>
+    <div id="preview-page"><canvas id="review-canvas" aria-label="PDF page preview"></canvas><div id="review-marks" aria-hidden="true"></div></div>
+    <aside><label>Note for this page<textarea id="note-text" maxlength="1000" rows="3"></textarea></label><button id="add-note">Add page note</button>
+    <h2>Page annotations</h2><ul id="annotation-list"></ul>
+    <label>Recognized text<textarea id="recognized" readonly rows="6"></textarea></label></aside>
+  </div>
+</main>
+</body></html>

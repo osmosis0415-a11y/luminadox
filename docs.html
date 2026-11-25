@@ -23,7 +23,8 @@
     <!-- Lucide Icons -->
     <script src="./vendor/lucide-1.79.0.min.js"></script>
     <!-- JSZip for Native .docx (OOXML) Export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous" async></script>
+    <script src="./vendor/jszip-3.10.1.min.js" defer></script>
+    <script src="./office-import.js" defer></script>
 
     <style>
         /* Custom scrollbar for a refined desktop-app feel */
@@ -627,6 +628,7 @@
                     <button onclick="copyMarkdownToClipboard()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5">
                         <i data-lucide="copy" class="w-4 h-4 text-amber-500"></i> Copy as Markdown
                     </button>
+                    <button onclick="document.getElementById('word-import').click()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800">Import Word (.docx)</button>
                     <button onclick="createDefenseDeck()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800">Create defense deck</button>
                     <button onclick="insertResearchChartInDocument()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800">Insert chart from CSV</button>
                     <a href="./pdf-tools.html" class="w-full px-3.5 py-2 text-xs hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5">
@@ -655,6 +657,7 @@
                     <button onclick="closePhoneActions(); toggleDarkMode()" class="w-full px-3 py-2 text-left text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5"><i data-lucide="moon" class="w-4 h-4"></i> Light / dark theme</button>
                     <button onclick="closePhoneActions(); openModal('cloud-sync-modal')" class="w-full px-3 py-2 text-left text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5"><i data-lucide="cloud" class="w-4 h-4"></i> Sync settings</button>
                     <button onclick="closePhoneActions(); openModal('install-app-modal')" class="w-full px-3 py-2 text-left text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5"><i data-lucide="smartphone-nfc" class="w-4 h-4"></i> Install app</button>
+                    <button onclick="closePhoneActions(); document.getElementById('word-import').click()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800">Import Word (.docx)</button>
                     <button onclick="closePhoneActions(); createDefenseDeck()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800">Create defense deck</button>
                     <button onclick="closePhoneActions(); insertResearchChartInDocument()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800">Insert chart from CSV</button>
                     <a href="./workspace.html" class="w-full px-3 py-2 text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5">Workspace</a>
@@ -1625,6 +1628,7 @@
     <div id="toast-container" class="fixed bottom-12 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <link rel="stylesheet" href="./accessibility.css">
+    <input type="file" id="word-import" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden onchange="importWordDocument(this)">
     <script src="./lumina-storage.js"></script>
     <script src="./library-store.js"></script>
     <link rel="stylesheet" href="./research-tools.css">
@@ -1739,11 +1743,13 @@
                     if (!response.ok) throw new Error(`Could not bundle ${path}`);
                     return response.text();
                 };
-                const [accessibilityCss, lucideJs, storageJs, accessibilityJs] = await Promise.all([
+                const [accessibilityCss, lucideJs, storageJs, accessibilityJs, zipJs, officeJs] = await Promise.all([
                     loadLocalAsset('./accessibility.css'),
                     loadLocalAsset('./vendor/lucide-1.79.0.min.js'),
                     loadLocalAsset('./lumina-storage.js'),
-                    loadLocalAsset('./accessibility.js')
+                    loadLocalAsset('./accessibility.js'),
+                    loadLocalAsset('./vendor/jszip-3.10.1.min.js'),
+                    loadLocalAsset('./office-import.js')
                 ]);
                 const clone = document.documentElement.cloneNode(true);
                 // Clean runtime state so the downloaded site boots fresh
@@ -1776,6 +1782,8 @@
                 inlineScript('script[src="./vendor/lucide-1.79.0.min.js"]', lucideJs, 'lucide-1.79.0.min.js');
                 inlineScript('script[src="./lumina-storage.js"]', storageJs, 'lumina-storage.js');
                 inlineScript('script[src="./accessibility.js"]', accessibilityJs, 'accessibility.js');
+                inlineScript('script[src="./vendor/jszip-3.10.1.min.js"]', zipJs, 'jszip-3.10.1.min.js');
+                inlineScript('script[src="./office-import.js"]', officeJs, 'office-import.js');
 
                 const fullHtml = '<!DOCTYPE html>\n' + clone.outerHTML;
                 downloadBlob(fullHtml, 'index.html', 'text/html');
@@ -2166,6 +2174,22 @@
             renderDocumentsList();
             renderCitationsList();
             renderCommentsList();
+        }
+
+        async function importWordDocument(input) {
+            const file = input.files[0];
+            input.value = '';
+            if (!file) return;
+            showToast('Importing Word document…');
+            try {
+                const html = await OfficeImport.word(file, window.JSZip, DOMParser, document);
+                const imported = normalizeDocumentRecord({ id:'doc_' + crypto.randomUUID(),
+                    title:file.name.replace(/\.docx$/i,''), content:html, updatedAt:Date.now() });
+                documents.unshift(imported);
+                openDocument(imported.id);
+                await persistWorkspace(imported);
+                showToast('Word document imported. Review formatting before sharing.');
+            } catch (error) { showToast('Could not import Word. ' + error.message, 'error'); }
         }
 
         function createNewDocument() {

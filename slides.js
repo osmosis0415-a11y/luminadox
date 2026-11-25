@@ -446,6 +446,25 @@ if (typeof document !== 'undefined') {
     }
   });
 
+  el('pptx-import').addEventListener('change', async event => {
+    const file = event.target.files[0];
+    event.target.value = '';
+    if (!file) return;
+    const button = event.target;
+    button.disabled = true;
+    el('save-status').textContent = 'Importing PowerPoint…';
+    try {
+      const imported = await OfficeImport.powerpoint(file, window.JSZip, DOMParser);
+      const title = file.name.replace(/\.pptx$/i, '');
+      const newDeck = normalizeDeck({ title, slides:imported });
+      const id = crypto.randomUUID();
+      localStorage.setItem(LuminaLibrary.deckKey(id), JSON.stringify({ ...newDeck, updatedAt:Date.now() }));
+      location.href = './slides.html?deck=' + encodeURIComponent(id);
+    } catch (error) {
+      el('save-status').textContent = 'Could not import PowerPoint. ' + error.message;
+    } finally { button.disabled = false; }
+  });
+
   async function initialize() {
     if (versionId) {
       try {

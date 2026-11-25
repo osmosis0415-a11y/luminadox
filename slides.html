@@ -14,6 +14,7 @@
   <script src="./slide-canvas-ui.js" defer></script>
   <script src="./research-tools.js" defer></script>
   <script src="./research-ui.js" defer></script>
+  <script src="./office-import.js" defer></script>
   <script src="./slides.js" defer></script>
   <link rel="stylesheet" href="./lumina-design.css">
   <script src="./vendor/lucide-1.79.0.min.js" defer></script>
@@ -101,7 +102,7 @@
       <button id="apply-template">Insert template slide</button>
       <button id="add-research-chart">Insert chart from CSV</button>
       <button id="apply-theme">Apply theme to all slides</button>
-      <div class="file-actions"><button id="backup">Save editable copy</button><label class="file-button">Open editable copy<input type="file" id="restore" accept=".json,application/json"></label></div>
+      <div class="file-actions"><button id="backup">Save editable copy</button><label class="file-button">Import PowerPoint<input type="file" id="pptx-import" accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation"></label><label class="file-button">Open editable copy<input type="file" id="restore" accept=".json,application/json"></label></div>
     </section>
   </main>
   <dialog id="show" aria-label="Slide presentation">

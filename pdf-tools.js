@@ -300,6 +300,7 @@ if (typeof document !== 'undefined') {
   const libraryFile = new URLSearchParams(location.search).get('file');
   if (libraryFile) {
     el('page-organizer').href = './organize-pdf.html?file=' + encodeURIComponent(libraryFile);
+    el('pdf-review-link').href = './pdf-review.html?file=' + encodeURIComponent(libraryFile);
     LuminaLibrary.get(libraryFile).then(record => {
       if (record?.kind !== 'pdf' || !(record.file instanceof Blob)) throw new Error('File missing.');
       savedPdf = new File([record.file], record.title, { type: 'application/pdf' });

@@ -1,6 +1,6 @@
 'use strict';
 
-function openResearchChart(insertChart) {
+function openResearchChart(insertChart, initialCsv, actionLabel) {
   const dialog = document.createElement('dialog');
   dialog.className = 'research-dialog';
   dialog.setAttribute('aria-label', 'Create a chart from CSV');
@@ -28,6 +28,7 @@ function openResearchChart(insertChart) {
   let csv;
   let chart;
   let generation = 0;
+  if (actionLabel) field('insert').textContent = actionLabel;
   field('close').onclick = () => dialog.close();
   dialog.addEventListener('close', () => { if (!dialog.open) dialog.remove(); });
 
@@ -65,16 +66,21 @@ function openResearchChart(insertChart) {
       if (file.size > 1024 * 1024) throw new Error('Choose a CSV under 1 MB.');
       const parsed = ResearchTools.parseCsv(await file.text());
       if (current !== generation) return;
-      csv = parsed;
-      for (const key of ['label', 'value']) {
-        const select = field(key);
-        select.replaceChildren(...csv.header.map((header, index) => new Option(header.trim() || 'Column ' + (index + 1), String(index))));
-        select.disabled = false;
-      }
-      field('value').value = '1';
-      render();
+      setCsv(parsed);
     } catch (error) { if (current === generation) status.textContent = error.message; }
   };
+
+  function setCsv(parsed) {
+    csv = parsed;
+    for (const key of ['label', 'value']) {
+      const select = field(key);
+      select.replaceChildren(...csv.header.map((header, index) => new Option(header.trim() || 'Column ' + (index + 1), String(index))));
+      select.disabled = false;
+    }
+    field('value').value = '1';
+    render();
+  }
+  if (initialCsv) setCsv(initialCsv);
 
   function insert(result) {
     dialog.close();

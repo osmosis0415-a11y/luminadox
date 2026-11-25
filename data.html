@@ -1,0 +1,42 @@
+<!doctype html><html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Data · Lumina Docs</title>
+  <link rel="stylesheet" href="./lumina-design.css"><link rel="stylesheet" href="./data-tools.css"><link rel="stylesheet" href="./research-tools.css">
+  <script src="./library-store.js" defer></script><script src="./research-tools.js" defer></script><script src="./research-ui.js" defer></script><script src="./data-tools.js" defer></script>
+</head>
+<body class="lumina-app">
+<header class="lumina-shell"><div class="lumina-shell-inner">
+  <a class="lumina-brand" href="./"><span class="lumina-mark" aria-hidden="true">L</span>Lumina Docs</a>
+  <nav class="lumina-nav" aria-label="App navigation"><a href="./workspace.html">Workspace</a><a href="./docs.html">Docs</a><a href="./slides.html">Slides</a><a href="./pdf-tools.html">PDF Tools</a></nav>
+</div></header>
+<main class="data-screen">
+  <h1 class="screen-title">Data workspace</h1><p class="screen-intro">Open a CSV, inspect the rows, calculate a new column, or create a chart for Docs and Slides.</p>
+  <div class="data-actions">
+    <label>Open CSV <input id="csv" type="file" accept=".csv,text/csv"></label>
+    <button id="chart" type="button" disabled>Create chart</button><button id="download-data" type="button" disabled>Download CSV</button>
+  </div>
+  <div class="data-panel" id="data-panel" hidden>
+    <h2 id="name"></h2>
+    <div class="data-actions">
+      <label>Filter all columns<input id="filter" type="search" placeholder="Search values"></label>
+      <label>Sort column<select id="sort-column"></select></label>
+      <label>Order<select id="sort-direction"><option value="asc">Ascending</option><option value="desc">Descending</option></select></label>
+    </div>
+    <details><summary>Add a calculated column</summary>
+      <form id="calculation" class="data-actions">
+        <label>New column name<input id="column-name" maxlength="80" required></label>
+        <label>First column<select id="first-column"></select></label>
+        <label>Operation<select id="math"><option value="+">Add</option><option value="-">Subtract</option><option value="*">Multiply</option><option value="/">Divide</option></select></label>
+        <label>Second column<select id="second-column"></select></label>
+        <button type="submit">Add column</button>
+      </form>
+    </details>
+    <p id="row-info"></p>
+    <div class="data-scroll" tabindex="0" aria-label="CSV results"><table><thead id="head"></thead><tbody id="rows"></tbody></table></div>
+    <div class="data-actions"><button id="previous" type="button">Previous</button><button id="next" type="button">Next</button></div>
+  </div>
+  <p id="data-status" role="status"></p>
+</main>
+</body></html>
