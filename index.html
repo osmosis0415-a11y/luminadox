@@ -626,6 +626,8 @@
                     <button onclick="copyMarkdownToClipboard()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5">
                         <i data-lucide="copy" class="w-4 h-4 text-amber-500"></i> Copy as Markdown
                     </button>
+                    <button onclick="createDefenseDeck()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800">Create defense deck</button>
+                    <button onclick="insertResearchChartInDocument()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800">Insert chart from CSV</button>
                     <a href="./pdf-tools.html" class="w-full px-3.5 py-2 text-xs hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5">
                         <i data-lucide="files" class="w-4 h-4"></i> PDF Tools
                     </a>
@@ -652,6 +654,8 @@
                     <button onclick="closePhoneActions(); toggleDarkMode()" class="w-full px-3 py-2 text-left text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5"><i data-lucide="moon" class="w-4 h-4"></i> Light / dark theme</button>
                     <button onclick="closePhoneActions(); openModal('cloud-sync-modal')" class="w-full px-3 py-2 text-left text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5"><i data-lucide="cloud" class="w-4 h-4"></i> Sync settings</button>
                     <button onclick="closePhoneActions(); openModal('install-app-modal')" class="w-full px-3 py-2 text-left text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5"><i data-lucide="smartphone-nfc" class="w-4 h-4"></i> Install app</button>
+                    <button onclick="closePhoneActions(); createDefenseDeck()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800">Create defense deck</button>
+                    <button onclick="closePhoneActions(); insertResearchChartInDocument()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800">Insert chart from CSV</button>
                     <a href="./workspace.html" class="w-full px-3 py-2 text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5">Workspace</a>
                     <a href="./slides.html" class="w-full px-3 py-2 text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5"><i data-lucide="presentation" class="w-4 h-4"></i> Slides</a>
                     <a href="./pdf-tools.html" class="w-full px-3 py-2 text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5"><i data-lucide="files" class="w-4 h-4"></i> PDF Tools</a>
@@ -1622,6 +1626,9 @@
     <link rel="stylesheet" href="./accessibility.css">
     <script src="./lumina-storage.js"></script>
     <script src="./library-store.js"></script>
+    <link rel="stylesheet" href="./research-tools.css">
+    <script src="./research-tools.js"></script>
+    <script src="./research-ui.js"></script>
     <script src="./accessibility.js" defer></script>
 
     <!-- ==================== APPLICATION LOGIC ==================== -->
@@ -2551,6 +2558,74 @@
                     menu.classList.add('hidden');
                 }
                 if (!e.target.closest('.phone-more')) closePhoneActions();
+            });
+        }
+
+        function collectDefenseSections() {
+            const sections = [];
+            let current = null;
+            const excluded = '#lumina-toc-section, #lumina-references-section';
+            for (const block of editor.querySelectorAll('h1,h2,h3,p,li,blockquote,.lumina-caption')) {
+                if (block.closest(excluded) || block.closest('td,th') || block.parentElement?.closest('li,blockquote')) continue;
+                const text = block.innerText.trim();
+                if (!text) continue;
+                if (/^H[123]$/.test(block.tagName)) {
+                    current = /^(?:references|bibliography|table of contents|contents)$/i.test(text)
+                        ? null : { title: text, paragraphs: [], captions: [] };
+                    if (current) sections.push(current);
+                } else if (current && block.classList.contains('lumina-caption')) {
+                    current.captions.push(text);
+                } else if (current) {
+                    current.paragraphs.push(text);
+                }
+            }
+            if (!sections.length && editor.innerText.trim()) {
+                sections.push({ title: titleInput.value.trim() || 'Overview',
+                    paragraphs: editor.innerText.split(/\n+/).filter(Boolean), captions: [] });
+            }
+            return sections;
+        }
+
+        function createDefenseDeck() {
+            const sections = collectDefenseSections();
+            if (!sections.length) {
+                showToast('Add some document content before creating a defense deck.', 'error');
+                return;
+            }
+            const doc = documents.find(entry => entry.id === activeDocId);
+            const title = titleInput.value;
+            chooseDefenseSections(sections, chosen => {
+                const deck = ResearchTools.buildDefenseDeck(title, chosen, doc?.citations || []);
+                const id = crypto.randomUUID();
+                try { localStorage.setItem(LuminaLibrary.deckKey(id), JSON.stringify(deck)); }
+                catch { throw new Error('Device storage is full or unavailable. The deck could not be saved.'); }
+                location.href = './slides.html?deck=' + encodeURIComponent(id);
+            });
+        }
+
+        function insertResearchChartInDocument() {
+            const active = activeDocId;
+            openResearchChart(({ png, description }) => {
+                if (active !== activeDocId) throw new Error('The active document changed. Reopen the chart tool.');
+                const image = document.createElement('img');
+                image.src = png;
+                image.alt = description;
+                image.style.maxWidth = '100%';
+                restoreSelection();
+                const selection = window.getSelection();
+                if (!selection.rangeCount || !editor.contains(selection.getRangeAt(0).commonAncestorContainer)) {
+                    selection.selectAllChildren(editor);
+                    selection.collapseToEnd();
+                }
+                if (!document.execCommand('insertHTML', false, image.outerHTML)) {
+                    const range = selection.getRangeAt(0);
+                    range.collapse(false);
+                    range.insertNode(image);
+                    selection.collapse(image.parentNode, Array.from(image.parentNode.childNodes).indexOf(image) + 1);
+                }
+                saveCurrentDocument();
+                updateStats();
+                updateOutline();
             });
         }
 

@@ -430,6 +430,22 @@ if (typeof document !== 'undefined') {
     report: message => { el('save-status').textContent = message; }
   });
 
+  el('add-research-chart').onclick = () => openResearchChart(({ title, description, png }) => {
+    const slide = deck.slides[active];
+    const object = canvasModel.normalizeObject({ kind: 'image', image: png, text: description, x: 10, y: 9, w: 80, h: 82 });
+    if (!object.image) throw new Error('The chart image is too large.');
+    if (slide.layout === 'freeform') {
+      if (slide.objects.length >= 40) throw new Error('This slide already contains 40 objects.');
+      slide.objects.push(object);
+      save();
+      render();
+      freeform.select(slide.objects.length - 1);
+    } else {
+      if (deck.slides.length >= 150) throw new Error('This deck already contains 150 slides.');
+      insert({ ...newSlide(), title, theme: slide.theme, layout: 'freeform', objects: [object] });
+    }
+  });
+
   async function initialize() {
     if (versionId) {
       try {

@@ -6,11 +6,14 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>Slides · Lumina Docs</title>
   <link rel="stylesheet" href="./slides.css">
+  <link rel="stylesheet" href="./research-tools.css">
   <script src="./vendor/jszip-3.10.1.min.js" defer></script>
   <script src="./vendor/pptxgen-3.12.0.min.js" defer></script>
   <script src="./library-store.js" defer></script>
   <script src="./slide-canvas.js" defer></script>
   <script src="./slide-canvas-ui.js" defer></script>
+  <script src="./research-tools.js" defer></script>
+  <script src="./research-ui.js" defer></script>
   <script src="./slides.js" defer></script>
 </head>
 <body>
@@ -83,6 +86,7 @@
         <select id="template"><option value="title">Title and subtitle</option><option value="comparison">Two-column comparison</option><option value="quote">Quotation</option></select>
       </label>
       <button id="apply-template">Insert template slide</button>
+      <button id="add-research-chart">Insert chart from CSV</button>
       <button id="apply-theme">Apply theme to all slides</button>
       <div class="file-actions"><button id="backup">Save editable copy</button><label class="file-button">Open editable copy<input type="file" id="restore" accept=".json,application/json"></label></div>
     </section>

@@ -1,0 +1,18 @@
+.research-dialog{width:min(94vw,44rem);max-height:90dvh;overflow:auto;border:1px solid #aeb9d4;border-radius:.75rem;padding:1.1rem;background:#fff;color:#202a45;font:16px system-ui}
+.research-dialog::backdrop{background:#17213dbb}
+.research-dialog header,.research-dialog footer{display:flex;justify-content:space-between;gap:.6rem;align-items:center;flex-wrap:wrap;margin-block:.3rem .75rem}
+.research-dialog footer{justify-content:flex-start}
+.research-dialog h2{font-size:1.2rem;font-weight:700}
+.research-dialog p{margin:.6rem 0;line-height:1.4}
+.research-dialog label{display:grid;gap:.28rem;font-size:.88rem;color:inherit}
+.research-dialog button,.research-dialog input,.research-dialog select{font:inherit;min-height:44px;padding:.45rem .6rem;border:1px solid #aeb9d4;border-radius:.4rem;background:#fff;color:inherit}
+.research-dialog button{cursor:pointer;color:#4135ad}
+.research-dialog button:disabled{opacity:.5;cursor:default}
+.research-dialog fieldset{max-height:45dvh;overflow:auto;border:1px solid #aeb9d4;border-radius:.4rem;padding:.5rem}
+.research-dialog fieldset label{display:flex;align-items:center;gap:.6rem}
+.research-dialog fieldset input{width:1.1rem;min-height:1.1rem;margin:.45rem}
+.research-dialog canvas{width:100%;height:auto;border:1px solid #ccd4e7;margin-top:.5rem}
+.research-dialog [hidden]{display:none!important}
+.research-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}
+.research-columns select{min-width:0;width:100%}
+@media(max-width:440px){.research-columns{grid-template-columns:1fr}}
