@@ -70,13 +70,15 @@ const OfficeImport = (() => {
     return { xml, relationships, image };
   }
 
-  async function word(file, Zip, Parser, document) {
+  async function word(file, Zip, Parser, document, settings = {}) {
     const archive = await open(file, Zip, Parser);
     const part = 'word/document.xml';
     const root = await archive.xml(part, true);
     const body = first(root, 'body');
     if (!body) throw new Error('This file has no Word document body.');
     const relationships = await archive.relationships(part);
+    const left = attr(first(first(body, 'sectPr'), 'pgMar'), 'left');
+    if (left === '1440' || left === '2160') settings.marginStyle = left === '1440' ? 'standard' : 'binding';
     const result = element(document, 'div');
     async function paragraph(node) {
       const style = attr(first(first(node, 'pPr'), 'pStyle'), 'val') || '';
@@ -115,7 +117,19 @@ const OfficeImport = (() => {
       return block;
     }
     for (const node of body.children) {
-      if (node.localName === 'p') result.append(await paragraph(node));
+      if (node.localName === 'p') {
+        const section = first(first(node, 'pPr'), 'sectPr');
+        const format = attr(first(section, 'pgNumType'), 'fmt');
+        const isRoman = format === 'lowerRoman' || format === 'upperRoman';
+        const block = await paragraph(node);
+        if (block.textContent.trim() || block.querySelector('img') || !isRoman) result.append(block);
+        if (isRoman && !result.querySelector('.lumina-section-break')) {
+          const marker = element(document, 'div');
+          marker.className = 'lumina-section-break';
+          marker.contentEditable = 'false';
+          result.append(marker);
+        }
+      }
       if (node.localName !== 'tbl') continue;
       const table = element(document, 'table');
       for (const row of children(node, 'tr')) {

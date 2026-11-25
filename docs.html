@@ -629,6 +629,9 @@
                         <i data-lucide="copy" class="w-4 h-4 text-amber-500"></i> Copy as Markdown
                     </button>
                     <button onclick="document.getElementById('word-import').click()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800">Import Word (.docx)</button>
+                    <button onclick="openThesisChecks()" class="w-full px-3 py-2 text-left text-xs">Thesis submission check</button>
+                    <button onclick="exportAdvisorCopy()" class="w-full px-3 py-2 text-left text-xs">Export advisor review copy</button>
+                    <button onclick="document.getElementById('advisor-import').click()" class="w-full px-3 py-2 text-left text-xs">Import advisor feedback</button>
                     <button onclick="createDefenseDeck()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800">Create defense deck</button>
                     <button onclick="insertResearchChartInDocument()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800">Insert chart from CSV</button>
                     <a href="./pdf-tools.html" class="w-full px-3.5 py-2 text-xs hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5">
@@ -658,6 +661,9 @@
                     <button onclick="closePhoneActions(); openModal('cloud-sync-modal')" class="w-full px-3 py-2 text-left text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5"><i data-lucide="cloud" class="w-4 h-4"></i> Sync settings</button>
                     <button onclick="closePhoneActions(); openModal('install-app-modal')" class="w-full px-3 py-2 text-left text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5"><i data-lucide="smartphone-nfc" class="w-4 h-4"></i> Install app</button>
                     <button onclick="closePhoneActions(); document.getElementById('word-import').click()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800">Import Word (.docx)</button>
+                    <button onclick="closePhoneActions(); openThesisChecks()" class="w-full px-3 py-2 text-left text-xs">Thesis submission check</button>
+                    <button onclick="closePhoneActions(); exportAdvisorCopy()" class="w-full px-3 py-2 text-left text-xs">Export advisor review copy</button>
+                    <button onclick="closePhoneActions(); document.getElementById('advisor-import').click()" class="w-full px-3 py-2 text-left text-xs">Import advisor feedback</button>
                     <button onclick="closePhoneActions(); createDefenseDeck()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800">Create defense deck</button>
                     <button onclick="closePhoneActions(); insertResearchChartInDocument()" class="w-full px-3.5 py-2 text-left text-xs hover:bg-slate-100 dark:hover:bg-slate-800">Insert chart from CSV</button>
                     <a href="./workspace.html" class="w-full px-3 py-2 text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5">Workspace</a>
@@ -1634,6 +1640,8 @@
     <link rel="stylesheet" href="./research-tools.css">
     <script src="./research-tools.js"></script>
     <script src="./research-ui.js"></script>
+    <script src="./thesis-checks.js"></script>
+    <input type="file" id="advisor-import" accept=".json,application/json" hidden onchange="importAdvisorFeedback(this)">
     <script src="./accessibility.js" defer></script>
 
     <!-- ==================== APPLICATION LOGIC ==================== -->
@@ -2073,6 +2081,15 @@
             remoteDocs.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
 
             const prevActive = documents.find(d => d.id === activeDocId);
+            const remoteActive = remoteDocs.find(d => d.id === activeDocId);
+            if (prevActive && remoteActive && remoteActive.updatedAt > prevActive.updatedAt &&
+                remoteActive.lastEditedByDevice !== DEVICE_SESSION_ID &&
+                prevActive.lastEditedByDevice === DEVICE_SESSION_ID && prevActive.content !== remoteActive.content &&
+                typeof LuminaLibrary !== 'undefined') {
+                LuminaLibrary.put({id:'version:sync:' + prevActive.id + ':' + prevActive.updatedAt, kind:'version',
+                    fileKey:'doc:' + prevActive.id, fileType:'doc', name:'Before remote sync',
+                    updatedAt:Date.now(), value:{ ...prevActive }}).catch(() => showToast('Could not save the previous local copy.', 'error'));
+            }
             documents = (window.LuminaStorage?.mergeDocuments(documents, remoteDocs) || remoteDocs)
                 .map(normalizeDocumentRecord).filter(Boolean);
             if (documents.length === 0) documents.push(createDefaultWelcomeDoc());
@@ -2182,9 +2199,10 @@
             if (!file) return;
             showToast('Importing Word document…');
             try {
-                const html = await OfficeImport.word(file, window.JSZip, DOMParser, document);
+                const settings = {};
+                const html = await OfficeImport.word(file, window.JSZip, DOMParser, document, settings);
                 const imported = normalizeDocumentRecord({ id:'doc_' + crypto.randomUUID(),
-                    title:file.name.replace(/\.docx$/i,''), content:html, updatedAt:Date.now() });
+                    title:file.name.replace(/\.docx$/i,''), content:html, ...settings, updatedAt:Date.now() });
                 documents.unshift(imported);
                 openDocument(imported.id);
                 await persistWorkspace(imported);
@@ -2609,6 +2627,71 @@
                     paragraphs: editor.innerText.split(/\n+/).filter(Boolean), captions: [] });
             }
             return sections;
+        }
+
+        function openThesisChecks() {
+            const record = documents.find(entry => entry.id === activeDocId);
+            if (!record) return;
+            const dialog = document.createElement('dialog');
+            dialog.className = 'research-dialog';
+            dialog.setAttribute('aria-label','Thesis submission check');
+            dialog.innerHTML = '<header><h2>Thesis submission check</h2><button type="button">Close</button></header><label>Required left margin<select><option value="">No preference</option><option value="standard">1 inch</option><option value="binding">1.5 inches</option></select></label><label>Front matter uses Roman page numbers <input type="checkbox"></label><p role="status"></p><ul></ul><p>Check final page layout and university requirements in the exported file.</p>';
+            const update = () => {
+                const warnings = thesisChecks(editor, record, { roman:dialog.querySelector('input').checked, margin:dialog.querySelector('select').value });
+                dialog.querySelector('[role=status]').textContent = warnings.length ? warnings.length + ' item(s) to review.' : 'No issues found in these checks.';
+                const items = warnings.map(message => { const item = document.createElement('li'); item.textContent = message; return item; });
+                dialog.querySelector('ul').replaceChildren(...items);
+            };
+            dialog.onchange = update;
+            dialog.querySelector('button').onclick = () => dialog.close();
+            dialog.onclose = () => dialog.remove();
+            document.body.append(dialog);
+            update();
+            dialog.showModal();
+        }
+
+        function exportAdvisorCopy() {
+            const record = documents.find(entry => entry.id === activeDocId);
+            if (!record) return;
+            const dialog = document.createElement('dialog');
+            dialog.className = 'research-dialog';
+            dialog.setAttribute('aria-label','Export advisor review copy');
+            dialog.innerHTML = '<header><h2>Export advisor review copy</h2><button type="button">Close</button></header><p>This file contains a plain-text copy of the current draft. The recipient can open it on the <a href="./advisor-review.html">Advisor review page</a>.</p><label>Review mode<select><option value="comment">Read and return feedback</option><option value="view">Read only</option></select></label><footer><button type="button">Download review copy</button></footer>';
+            dialog.querySelector('header button').onclick = () => dialog.close();
+            dialog.querySelector('footer button').onclick = () => {
+                const mode = dialog.querySelector('select').value;
+                downloadBlob(JSON.stringify({ kind:'lumina-review-v1', id:record.id, revision:record.updatedAt, title:record.title, text:editor.innerText, mode }), 'advisor-review.json', 'application/json');
+                dialog.close();
+            };
+            dialog.onclose = () => dialog.remove();
+            document.body.append(dialog);
+            dialog.showModal();
+        }
+
+        async function importAdvisorFeedback(input) {
+            const file = input.files[0];
+            input.value = '';
+            if (!file) return;
+            const id = activeDocId;
+            try {
+                if (file.size > 65536) throw Error('Choose a Lumina feedback file.');
+                const item = JSON.parse(await file.text());
+                if (id !== activeDocId || item.kind !== 'lumina-feedback-v1' || item.id !== id ||
+                    !/^[a-f0-9-]{36}$/i.test(item.response || '') || typeof item.text !== 'string' || !item.text.trim()) {
+                    throw Error('Open the document that matches this feedback file.');
+                }
+                const record = documents.find(entry => entry.id === id);
+                const responseId = 'advisor_' + item.response;
+                if (record.comments.some(comment => comment.id === responseId)) throw Error('This feedback is already in your notes.');
+                const earlier = item.revision !== record.updatedAt;
+                record.comments.push({id:responseId, author:String(item.author || 'Advisor').slice(0,100), text:item.text.slice(0,5000),
+                    quote:earlier ? 'Feedback on an earlier draft' : '', resolved:false, createdAt:Date.now()});
+                record.updatedAt = Date.now();
+                await persistWorkspace(record);
+                switchLeftTab('comments');
+                renderCommentsList();
+                showToast(earlier ? 'Imported feedback on an earlier draft.' : 'Advisor feedback added to Notes.');
+            } catch (error) { showToast(error.message, 'error'); }
         }
 
         function createDefenseDeck() {
