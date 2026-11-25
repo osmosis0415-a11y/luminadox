@@ -1,0 +1,187 @@
+/* Shared application surfaces and navigation. Slide and document content keep their own styles. */
+:root {
+  --lumina-bg:#f4f6fb;
+  --lumina-surface:#ffffff;
+  --lumina-soft:#edf0fa;
+  --lumina-line:#d9dfed;
+  --lumina-ink:#17213a;
+  --lumina-muted:#4c5b76;
+  --lumina-accent:#4338b5;
+  --lumina-on-accent:#fff;
+  --lumina-selected:#eeebff;
+  --lumina-focus:#a75800;
+  --lumina-shadow:0 12px 32px #1b285b0c,0 2px 6px #1b285b0a;
+  --lumina-radius:1rem;
+  --lumina-gutter:clamp(.875rem,3vw,2rem);
+}
+.dark:root {
+  --lumina-bg:#101625;--lumina-surface:#192235;--lumina-soft:#222d45;--lumina-line:#3a4765;
+  --lumina-ink:#edf1ff;--lumina-muted:#b2bfd9;--lumina-accent:#b6adff;--lumina-on-accent:#1a123f;
+  --lumina-selected:#302656;--lumina-focus:#ffc773;--lumina-shadow:0 12px 32px #02061440;
+}
+@media(prefers-color-scheme:dark) {
+  :root:has(body.lumina-app) {
+    --lumina-bg:#101625;--lumina-surface:#192235;--lumina-soft:#222d45;--lumina-line:#3a4765;
+    --lumina-ink:#edf1ff;--lumina-muted:#b2bfd9;--lumina-accent:#b6adff;--lumina-on-accent:#1a123f;
+    --lumina-selected:#302656;--lumina-focus:#ffc773;--lumina-shadow:0 12px 32px #02061440;color-scheme:dark;
+  }
+}
+:root:has(body.lumina-app){background:var(--lumina-bg);color:var(--lumina-ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.lumina-app {
+  margin:0;min-height:100vh;background:var(--lumina-bg);color:var(--lumina-ink);
+  --surface:var(--lumina-surface);--line:var(--lumina-line);--border:var(--lumina-line);--accent:var(--lumina-accent);
+}
+.lumina-app :focus-visible,.lumina-docs :focus-visible {outline-color:var(--lumina-focus)}
+.lumina-app a {color:var(--lumina-accent)}
+.lumina-app button,.lumina-app input,.lumina-app select,.lumina-app textarea,.lumina-app .file-button {
+  background:var(--lumina-surface);border-color:var(--lumina-line);color:var(--lumina-ink)
+}
+.lumina-app button:not(:disabled):hover,.lumina-app .file-button:hover{border-color:var(--lumina-accent)}
+.lumina-app .primary,.lumina-app button[type=submit],.lumina-app .result-link {
+  background:var(--lumina-accent);border-color:var(--lumina-accent);color:var(--lumina-on-accent)
+}
+.lumina-shell {
+  position:relative;display:block;padding:0;background:var(--lumina-surface);
+  border-bottom:1px solid var(--lumina-line);color:var(--lumina-ink)
+}
+.lumina-shell-inner {
+  max-width:86rem;margin:auto;display:flex;align-items:center;justify-content:space-between;
+  padding:.625rem var(--lumina-gutter);gap:1rem
+}
+.lumina-brand {
+  display:inline-flex;align-items:center;gap:.65rem;white-space:nowrap;
+  color:var(--lumina-ink)!important;text-decoration:none;font-size:.95rem;font-weight:760;letter-spacing:-.02em
+}
+.lumina-mark {
+  display:grid;place-items:center;background:linear-gradient(145deg,#574cec,#36309e);color:#fff;
+  border-radius:.64rem;width:2.15rem;height:2.15rem;font-size:1.05rem;font-weight:800
+}
+.lumina-shell .lumina-nav {display:flex;gap:.25rem;margin:0;padding:0;max-width:none;flex-wrap:wrap;align-items:center}
+.lumina-nav a {
+  text-decoration:none;display:flex;align-items:center;gap:.4rem;padding:.5rem .75rem;min-height:42px;
+  color:var(--lumina-muted);border-radius:.6rem;font-size:.875rem;font-weight:670;white-space:nowrap
+}
+.lumina-nav a:hover {background:var(--lumina-soft);color:var(--lumina-accent)}
+.lumina-nav a[aria-current=page]{background:var(--lumina-selected);color:var(--lumina-accent)}
+.lumina-nav svg,.workspace-create svg,.pdf-shortcut svg{width:1rem;height:1rem;flex:none}
+.lumina-app .screen-title {margin:0;font-size:clamp(1.95rem,4.8vw,3.25rem);font-weight:760;letter-spacing:-.045em;line-height:1.06}
+.lumina-app .screen-intro {margin:.6rem 0 0;color:var(--lumina-muted);max-width:55ch;line-height:1.55}
+.workspace-screen{max-width:75rem;padding:clamp(1.25rem,5vw,3.5rem) var(--lumina-gutter);margin:auto}
+.workspace-hero {
+  padding:clamp(1rem,3.5vw,2.15rem);border:1px solid var(--lumina-line);border-radius:1.25rem;
+  background:linear-gradient(115deg,var(--lumina-surface) 45%,var(--lumina-selected));box-shadow:var(--lumina-shadow)
+}
+.workspace-create {
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.65rem;margin:1.5rem 0 0
+}
+.workspace-create>a,.workspace-create>button,.workspace-create>.file-button {
+  padding:.6rem .75rem;display:flex;align-items:center;justify-content:flex-start;gap:.55rem;
+  text-decoration:none;min-height:50px;color:var(--lumina-accent);font-size:.87rem;font-weight:690;
+  border-radius:.7rem;border:1px solid var(--lumina-line);background:var(--lumina-surface)
+}
+.workspace-create>a:hover{border-color:var(--lumina-accent)}
+.workspace-create>a:first-child{background:var(--lumina-accent);color:var(--lumina-on-accent);border-color:var(--lumina-accent)}
+.workspace-library{margin-top:clamp(1.5rem,4vw,2.7rem)}
+.workspace-library h2{font-size:1.24rem;letter-spacing:-.025em;margin:0 0 .7rem}
+.workspace-library .filters {
+  display:grid;grid-template-columns:minmax(11rem,1.7fr) repeat(3,minmax(7rem,1fr)) auto;
+  background:var(--lumina-surface);border:1px solid var(--lumina-line);padding:.8rem;border-radius:.85rem
+}
+.workspace-library .filters label{font-size:.79rem;color:var(--lumina-muted)}
+.workspace-library .filters input:not([type=checkbox]),.workspace-library .filters select{width:100%;min-width:0}
+.workspace-library #files{gap:.45rem;margin-top:.5rem}
+.workspace-library #files li{position:relative;min-height:65px;padding:.8rem .85rem .75rem 1rem;border-radius:.7rem}
+.workspace-library #files li[data-kind]{border-inline-start:.25rem solid var(--lumina-accent)}
+.workspace-library #files li[data-kind=slide]{border-inline-start-color:#6b57c9}
+.workspace-library #files li[data-kind=pdf]{border-inline-start-color:#a5573b}
+.workspace-library .file-title{text-decoration:none;color:var(--lumina-ink)}
+.workspace-library .file-title:hover{text-decoration:underline}
+.workspace-library .details{margin:.22rem 0 0;color:var(--lumina-muted)}
+.workspace-library .file-actions button,.workspace-library .file-actions a{min-height:42px;font-size:.82rem}
+.lumina-app dialog:not(.research-dialog):not(#show){background:var(--lumina-surface);color:var(--lumina-ink);border-color:var(--lumina-line);box-shadow:var(--lumina-shadow)}
+.lumina-slides .topbar{
+  max-width:86rem;margin:auto;background:transparent;border:0;padding:.65rem var(--lumina-gutter);
+}
+.lumina-slides .deck-name {font-size:.77rem;color:var(--lumina-muted);max-width:34rem}
+.lumina-slides .deck-name input {font-weight:700;letter-spacing:-.018em}
+.lumina-slides .workspace{
+  max-width:86rem;margin:auto;gap:1rem;padding:0 var(--lumina-gutter) 2rem;
+  grid-template-columns:minmax(11rem,14rem) minmax(0,1fr) minmax(17rem,21rem)
+}
+.lumina-slides .sidebar,.lumina-slides .inspector {
+  background:var(--lumina-surface);border-color:var(--lumina-line);padding:.9rem;
+  border-radius:var(--lumina-radius);box-shadow:var(--lumina-shadow)
+}
+.lumina-slides .inspector h2,.lumina-slides .panel-title h1{font-size:1.05rem;letter-spacing:-.025em}
+.lumina-slides .stage {background:var(--lumina-soft);padding:clamp(.55rem,1.2vw,1rem);border-radius:var(--lumina-radius);border:1px solid var(--lumina-line)}
+.lumina-slides .thumb[aria-current=true]{background:var(--lumina-selected);border-color:var(--lumina-accent)}
+.lumina-slides #save-status,.lumina-slides .canvas-help{color:var(--lumina-muted)}
+.lumina-slides .actions{margin-top:.95rem}
+.lumina-pdf .pdf-screen {
+  max-width:73rem;display:grid;grid-template-columns:minmax(14rem,.9fr) minmax(0,1.35fr);
+  align-items:start;gap:clamp(1.1rem,4vw,3rem);padding:clamp(1.25rem,5vw,3.5rem) var(--lumina-gutter)
+}
+.lumina-pdf .pdf-intro {padding-top:.5rem}
+.pdf-shortcut {
+  display:inline-flex;align-items:center;gap:.55rem;min-height:44px;margin-top:1rem;padding:.55rem .7rem;
+  border:1px solid var(--lumina-line);border-radius:.6rem;background:var(--lumina-surface);font-size:.875rem;font-weight:660
+}
+.lumina-pdf #pdf-form {background:var(--lumina-surface);border-color:var(--lumina-line);box-shadow:var(--lumina-shadow);min-width:0}
+.lumina-pdf #files {padding:.65rem;background:var(--lumina-soft);width:100%}
+.lumina-pdf input[type=file]::file-selector-button,.lumina-organize input[type=file]::file-selector-button {
+  font:inherit;border:0;border-radius:.4rem;padding:.38rem .55rem;background:var(--lumina-selected);color:var(--lumina-accent);margin-inline-end:.5rem
+}
+.lumina-organize main {padding:clamp(1.25rem,4vw,2.7rem) var(--lumina-gutter)}
+.lumina-organize .organizer-intro{margin-bottom:1.2rem}
+.lumina-organize #controls,.lumina-organize .page{background:var(--lumina-surface);border-color:var(--lumina-line)}
+.lumina-organize #controls{box-shadow:var(--lumina-shadow)}
+.lumina-organize .page .preview{background:var(--lumina-soft);color:var(--lumina-muted)}
+.lumina-docs #top-header,.lumina-docs #formatting-ribbon,.lumina-docs #left-sidebar,.lumina-docs #right-sidebar,.lumina-docs #status-footer {
+  background:var(--lumina-surface);border-color:var(--lumina-line)
+}
+.lumina-docs #top-header{box-shadow:0 1px 3px #1b285b0c}
+.lumina-docs #formatting-ribbon{
+  min-height:46px;gap:.3rem;padding-block:.32rem;box-shadow:0 4px 8px #1b285b0a
+}
+.lumina-docs #workspace-scroll {
+  background-color:var(--lumina-bg);
+  background-image:radial-gradient(color-mix(in srgb,var(--lumina-muted) 16%,transparent) 1px,transparent 1px);
+  background-size:24px 24px
+}
+.lumina-docs #page-sheet {background:var(--lumina-surface);border-color:var(--lumina-line);box-shadow:var(--lumina-shadow)}
+.lumina-docs #more-tools {color:var(--lumina-accent);background:var(--lumina-selected);border-color:var(--lumina-line)}
+.lumina-docs #doc-title-input {color:var(--lumina-ink)}
+.lumina-docs #top-header .phone-brand{text-decoration:none}
+@media(max-width:1050px){
+  .lumina-slides .workspace{grid-template-columns:minmax(9rem,13rem) minmax(0,1fr)}
+}
+@media(max-width:760px){
+  .workspace-library .filters{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .workspace-library .filters label:first-child{grid-column:1/-1}
+  .workspace-create{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lumina-pdf .pdf-screen{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:620px){
+  .lumina-shell-inner{flex-wrap:wrap;gap:.4rem;padding-block:.5rem}
+  .lumina-nav a{padding:.4rem .58rem;min-height:40px}
+  .lumina-slides .workspace{grid-template-columns:minmax(0,1fr);gap:.65rem}
+  .lumina-slides .actions{margin-top:0}
+  .lumina-slides .topbar{gap:.6rem}
+}
+@media(max-width:370px){
+  .lumina-nav a{font-size:.8rem;padding-inline:.43rem}
+  .lumina-nav svg{display:none}
+}
+
+.workspace-library #status:empty {min-height:0;margin:0}
+@media (min-width:641px) and (max-width:1000px) {
+  .lumina-docs #workspace-scroll {padding-inline:1rem}
+  .lumina-docs #page-sheet {padding-inline:clamp(1.25rem,4vw,2.3rem)}
+}
+@media (max-width:620px) {
+  .lumina-shell .lumina-nav {width:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+  .lumina-shell .lumina-nav a {justify-content:center;padding-inline:.2rem;font-size:.79rem}
+}
+@media (max-width:440px) {
+  .lumina-nav svg {display:none}
+}

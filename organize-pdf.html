@@ -9,12 +9,27 @@
   <script defer src="./library-store.js"></script>
   <script defer src="./vendor/pdf-lib-1.17.1.min.js"></script>
   <script defer src="./organize-pdf.js"></script>
+  <link rel="stylesheet" href="./lumina-design.css">
+  <script src="./vendor/lucide-1.79.0.min.js" defer></script>
+  <script src="./lumina-design.js" defer></script>
 </head>
-<body>
-  <header><nav><a href="./workspace.html">Workspace</a><a href="./pdf-tools.html">PDF Tools</a></nav></header>
+<body class="lumina-app lumina-organize">
+  <header class="lumina-shell">
+  <div class="lumina-shell-inner">
+    <a class="lumina-brand" href="./workspace.html"><span class="lumina-mark" aria-hidden="true">L</span>Lumina Docs</a>
+    <nav class="lumina-nav" aria-label="App navigation">
+      <a href="./workspace.html"><i data-lucide="layout-grid" aria-hidden="true"></i>Workspace</a>
+      <a href="./index.html"><i data-lucide="file-text" aria-hidden="true"></i>Docs</a>
+      <a href="./slides.html"><i data-lucide="presentation" aria-hidden="true"></i>Slides</a>
+      <a href="./pdf-tools.html" aria-current="page"><i data-lucide="files" aria-hidden="true"></i>PDF Tools</a>
+    </nav>
+  </div>
+</header>
   <main>
-    <h1>Organize PDF pages</h1>
-    <p>Drag pages or use the move buttons to put them in order. Changes are saved to a new PDF. Removing pages can discard document-level bookmarks and interactive forms.</p>
+    <section class="organizer-intro">
+      <h1 class="screen-title">Organize PDF pages</h1>
+      <p class="screen-intro">Drag pages or use the move buttons to reorder them. You’ll download a new PDF. Removing pages can discard bookmarks and interactive forms.</p>
+    </section>
     <label class="file-picker">Choose a PDF <input id="source-file" type="file" accept=".pdf,application/pdf"></label>
     <p id="document-name"></p>
     <fieldset id="controls" disabled>

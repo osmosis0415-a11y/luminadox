@@ -15,10 +15,23 @@
   <script src="./research-tools.js" defer></script>
   <script src="./research-ui.js" defer></script>
   <script src="./slides.js" defer></script>
+  <link rel="stylesheet" href="./lumina-design.css">
+  <script src="./vendor/lucide-1.79.0.min.js" defer></script>
+  <script src="./lumina-design.js" defer></script>
 </head>
-<body>
+<body class="lumina-app lumina-slides">
+  <header class="lumina-shell">
+  <div class="lumina-shell-inner">
+    <a class="lumina-brand" href="./workspace.html"><span class="lumina-mark" aria-hidden="true">L</span>Lumina Docs</a>
+    <nav class="lumina-nav" aria-label="App navigation">
+      <a href="./workspace.html"><i data-lucide="layout-grid" aria-hidden="true"></i>Workspace</a>
+      <a href="./index.html"><i data-lucide="file-text" aria-hidden="true"></i>Docs</a>
+      <a href="./slides.html" aria-current="page"><i data-lucide="presentation" aria-hidden="true"></i>Slides</a>
+      <a href="./pdf-tools.html"><i data-lucide="files" aria-hidden="true"></i>PDF Tools</a>
+    </nav>
+  </div>
+</header>
   <header class="topbar">
-    <a class="brand" href="./workspace.html">← Workspace</a>
     <label class="deck-name">Presentation <input id="deck-title" maxlength="100" value="Untitled presentation"></label>
     <div class="actions"><button id="present" class="primary">Present</button><button id="export">Export PowerPoint</button></div>
   </header>

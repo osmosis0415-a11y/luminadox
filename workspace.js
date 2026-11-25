@@ -76,6 +76,7 @@ function draw() {
   const list = el('files');
   list.replaceChildren(...visible.map(row => {
     const item = document.createElement('li');
+    item.dataset.kind = row.kind;
     const summary = document.createElement('div');
     const title = makeLink(row.title, linkFor(row));
     title.className = 'file-title';

@@ -9,18 +9,35 @@
   <script src="./lumina-storage.js" defer></script>
   <script src="./library-store.js" defer></script>
   <script src="./workspace.js" defer></script>
+  <link rel="stylesheet" href="./lumina-design.css">
+  <script src="./vendor/lucide-1.79.0.min.js" defer></script>
+  <script src="./lumina-design.js" defer></script>
 </head>
-<body>
-  <header><a href="./index.html">Lumina Docs</a><a href="./slides.html">Slides</a><a href="./pdf-tools.html">PDF Tools</a></header>
-  <main>
-    <h1>Workspace</h1>
-    <p>Find your documents, decks, and saved PDFs on this device.</p>
-    <nav aria-label="Create or import" class="tools">
-      <a href="./index.html?new=blank">New document</a>
-      <a href="./index.html?new=thesis">New thesis</a>
-      <button id="new-deck">New slide deck</button>
-      <label class="file-button">Add PDFs<input id="pdfs" type="file" accept=".pdf,application/pdf" multiple></label>
+<body class="lumina-app lumina-workspace">
+  <header class="lumina-shell">
+  <div class="lumina-shell-inner">
+    <a class="lumina-brand" href="./workspace.html"><span class="lumina-mark" aria-hidden="true">L</span>Lumina Docs</a>
+    <nav class="lumina-nav" aria-label="App navigation">
+      <a href="./workspace.html" aria-current="page"><i data-lucide="layout-grid" aria-hidden="true"></i>Workspace</a>
+      <a href="./index.html"><i data-lucide="file-text" aria-hidden="true"></i>Docs</a>
+      <a href="./slides.html"><i data-lucide="presentation" aria-hidden="true"></i>Slides</a>
+      <a href="./pdf-tools.html"><i data-lucide="files" aria-hidden="true"></i>PDF Tools</a>
     </nav>
+  </div>
+</header>
+  <main class="workspace-screen">
+    <section class="workspace-hero" aria-labelledby="workspace-title">
+    <h1 id="workspace-title" class="screen-title">Workspace</h1>
+    <p class="screen-intro">Create or reopen documents, slide decks, and PDFs on this device.</p>
+    <nav aria-label="Create or import" class="workspace-create">
+      <a href="./index.html?new=blank"><i data-lucide="file-plus" aria-hidden="true"></i>New document</a>
+      <a href="./index.html?new=thesis"><i data-lucide="graduation-cap" aria-hidden="true"></i>New thesis</a>
+      <button id="new-deck"><i data-lucide="presentation" aria-hidden="true"></i>New slide deck</button>
+      <label class="file-button"><i data-lucide="file-up" aria-hidden="true"></i>Add PDFs<input id="pdfs" type="file" accept=".pdf,application/pdf" multiple></label>
+    </nav>
+    </section>
+    <section class="workspace-library" aria-labelledby="library-title">
+    <h2 id="library-title">Your files</h2>
     <div class="filters">
       <label>Search files<input id="search" type="search" placeholder="Title, folder, or tags"></label>
       <label>File type<select id="type"><option value="">All files</option><option value="doc">Documents</option><option value="slide">Slide decks</option><option value="pdf">PDFs</option></select></label>
@@ -30,6 +47,7 @@
     </div>
     <p id="status" role="status"></p>
     <ul id="files" aria-label="Workspace files"></ul>
+    </section>
   </main>
   <dialog id="settings">
     <form id="settings-form">
