@@ -6,12 +6,13 @@ const themes = {
   forest: ['123B35', 'F1FDF5', '89D8A7'],
   coral: ['3D233B', 'FFF0E8', 'FFAF94']
 };
-const layouts = ['cover', 'text', 'bullets', 'image'];
+const canvasModel = typeof module !== 'undefined' ? require('./slide-canvas.js') : SlideCanvas;
+const layouts = ['cover', 'text', 'bullets', 'image', 'freeform'];
 const effects = { none: '', fade: '<p:fade/>', push: '<p:push dir="l"/>', wipe: '<p:wipe dir="l"/>' };
 const durations = { fast: '220ms', med: '450ms', slow: '750ms' };
 
 function newSlide() {
-  return { title: '', body: '', notes: '', layout: 'text', theme: 'ink', transition: 'none', speed: 'med', image: '', imageDescription: '' };
+  return { title: '', body: '', notes: '', layout: 'text', theme: 'ink', transition: 'none', speed: 'med', image: '', imageDescription: '', objects: [] };
 }
 
 function normalizeDeck(raw) {
@@ -31,7 +32,8 @@ function normalizeDeck(raw) {
         transition: Object.hasOwn(effects, slide.transition) ? slide.transition : 'none',
         speed: Object.hasOwn(durations, slide.speed) ? slide.speed : 'med',
         image: /^data:image\/(png|jpeg);base64,[0-9A-Za-z+/]+={0,2}$/.test(image) ? image : '',
-        imageDescription: string(slide.imageDescription, 250)
+        imageDescription: string(slide.imageDescription, 250),
+        objects: Array.isArray(slide.objects) ? slide.objects.slice(0, 40).map(canvasModel.normalizeObject).filter(Boolean) : []
       };
     })
   };
@@ -54,6 +56,28 @@ async function exportDeck(deck, PowerPoint, Zip, measureImage = readImageSize) {
     const slide = pptx.addSlide();
     const [background, color, accent] = themes[item.theme];
     slide.background = { color: background };
+    if (item.layout === 'freeform') {
+      for (const object of item.objects) {
+        const x = object.x * 13.333333 / 100;
+        const y = object.y * 7.5 / 100;
+        const w = object.w * 13.333333 / 100;
+        const h = object.h * 7.5 / 100;
+        if (object.kind === 'text') {
+          slide.addText(object.text, { x, y, w, h, fontSize: object.size, color: object.color, margin: 0, fit: 'shrink', valign: 'top' });
+        } else if (object.kind === 'image' && object.image) {
+          const { width, height } = await measureImage(object.image);
+          const scale = Math.min(w / width, h / height);
+          const widthInches = width * scale;
+          const heightInches = height * scale;
+          slide.addImage({ data: object.image, x: x + (w - widthInches) / 2, y: y + (h - heightInches) / 2, w: widthInches, h: heightInches, altText: object.text });
+        } else if (object.kind === 'rectangle' || object.kind === 'ellipse') {
+          const shape = object.kind === 'ellipse' ? pptx.ShapeType.ellipse : pptx.ShapeType.rect;
+          slide.addShape(shape, { x, y, w, h, fill: { color: object.color }, line: { color: object.color, transparency: 100 } });
+        }
+      }
+      if (item.notes) slide.addNotes(item.notes);
+      continue;
+    }
     const top = item.layout === 'cover' ? 2.25 : 0.8;
     const imageLayout = item.layout === 'image';
     slide.addShape(pptx.ShapeType.rect, { x: 0.9, y: top, w: 1.4, h: 0.07, line: { color: accent, transparency: 100 }, fill: { color: accent } });
@@ -137,6 +161,14 @@ if (typeof document !== 'undefined') {
     node.style.setProperty('--duration', durations[slide.speed]);
     applyColors(node, slide.theme);
 
+    if (slide.layout === 'freeform') {
+      const frame = document.createElement('div');
+      frame.className = 'slide-inner freeform-frame';
+      const editing = node.id === 'canvas';
+      paintSlideObjects(frame, slide.objects, editing ? freeform.selected() : -1, editing ? freeform.select : null);
+      node.replaceChildren(frame);
+      return;
+    }
     const frame = document.createElement('div');
     frame.className = 'slide-inner';
     const accent = document.createElement('div');
@@ -210,6 +242,7 @@ if (typeof document !== 'undefined') {
     layout: 'layout', transition: 'transition', speed: 'speed', 'image-description': 'imageDescription'
   };
   function render() {
+    freeform.reset();
     const slide = deck.slides[active];
     el('deck-title').value = deck.title;
     for (const [id, property] of Object.entries(fields)) el(id).value = slide[property];
@@ -219,9 +252,10 @@ if (typeof document !== 'undefined') {
     el('up').disabled = active === 0;
     el('down').disabled = active === deck.slides.length - 1;
     el('remove').disabled = deck.slides.length <= 1;
-    el('add').disabled = el('duplicate').disabled = deck.slides.length >= 150;
+    el('add').disabled = el('duplicate').disabled = el('apply-template').disabled = deck.slides.length >= 150;
     el('speed').disabled = slide.transition === 'none';
     paint(el('canvas'), slide);
+    freeform.updateFields();
     renderList();
   }
 
@@ -248,7 +282,17 @@ if (typeof document !== 'undefined') {
     el('slide-title').focus();
   }
   el('add').onclick = () => insert({ ...newSlide(), theme: deck.slides[active].theme });
-  el('duplicate').onclick = () => insert({ ...deck.slides[active] });
+  el('duplicate').onclick = () => {
+    const slide = deck.slides[active];
+    insert({ ...slide, objects: slide.objects.map(object => ({ ...object })) });
+  };
+  el('apply-template').onclick = () => {
+    if (deck.slides.length >= 150) return;
+    const theme = deck.slides[active].theme;
+    const choice = el('template').value;
+    const name = el('template').selectedOptions[0].textContent;
+    insert({ ...newSlide(), title: name, theme, layout: 'freeform', objects: canvasModel.template(choice, themes[theme]) });
+  };
   el('remove').onclick = () => {
     const name = deck.slides[active].title || 'this untitled slide';
     if (!window.confirm('Delete ' + name + '?')) return;
@@ -377,6 +421,14 @@ if (typeof document !== 'undefined') {
       button.disabled = false;
     }
   };
+
+  const freeform = setupCanvasEditor({
+    getSlide: () => deck.slides[active],
+    getColors: () => themes[deck.slides[active].theme],
+    save,
+    draw: () => paint(el('canvas'), deck.slides[active]),
+    report: message => { el('save-status').textContent = message; }
+  });
 
   async function initialize() {
     if (versionId) {

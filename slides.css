@@ -58,3 +58,15 @@ dialog::backdrop{background:#101221ef}
 @media(prefers-reduced-motion:reduce){.slide .slide-inner{animation:none!important}}
 @media(max-width:1050px){.workspace{grid-template-columns:11rem minmax(0,1fr)}.inspector{grid-column:2}}
 @media(max-width:620px){.workspace{grid-template-columns:minmax(0,1fr)}.inspector{grid-column:auto}.stage{grid-row:1}#slide-list{display:flex;overflow:auto}.thumb{min-width:8rem;max-width:10rem}.actions{margin-left:0}dialog{width:98vw}}
+
+.slide-inner.freeform-frame{position:absolute;inset:0;padding:0;display:block}
+.canvas-object{position:absolute;display:block;overflow:hidden;color:var(--object-color);white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.1}
+.canvas-rectangle,.canvas-ellipse{background:var(--object-color)}
+.canvas-ellipse{border-radius:50%}
+.canvas-image img{display:block;width:100%;height:100%;object-fit:contain}
+#canvas .canvas-object{touch-action:none;cursor:grab}
+#canvas .canvas-object[aria-pressed=true]{outline:2px solid #eea636;outline-offset:1px;box-shadow:0 0 0 4px #25213a95}
+#canvas .canvas-object:active{cursor:grabbing}
+#freeform-controls,#object-fields{display:grid;gap:.65rem}
+#freeform-controls h3{font-size:.95rem;margin:0}
+.canvas-help{font-size:.78rem;color:#48516c}

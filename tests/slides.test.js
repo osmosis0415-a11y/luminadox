@@ -37,3 +37,28 @@ test('PowerPoint export has editable text, images, speaker notes, and per-slide 
   assert.match(await xml('ppt/notesSlides/notesSlide1.xml'), /Explain the study design/);
   assert.ok(Object.keys(archive.files).some(name => /^ppt\/media\/.*\.png$/.test(name)));
 });
+
+test('freeform export keeps text, native shapes, and image objects editable', async () => {
+  const image = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jT3sAAAAASUVORK5CYII=';
+  const deck = normalizeDeck({ title: 'Canvas', slides: [{ layout: 'freeform', theme: 'ink', transition: 'fade',
+    objects: [{ kind: 'text', text: 'Editable canvas text', x: 12, y: 25, w: 40, h: 20, size: 23 },
+      { kind: 'ellipse', color: 'FF1100' }, { kind: 'image', text: 'Diagram', image },
+      { kind: 'rectangle', color: '00FF00', x: 120 }, { kind: 'unknown' }] }] });
+  assert.equal(deck.slides[0].objects.length, 4);
+  assert.equal(deck.slides[0].objects[3].x, 68);
+  const archive = await JSZip.loadAsync(await exportDeck(deck, PowerPoint, JSZip, async () => ({ width: 1, height: 1 })));
+  const xml = await archive.file('ppt/slides/slide1.xml').async('string');
+  assert.match(xml, /Editable canvas text/);
+  assert.match(xml, /prst="ellipse"/);
+  assert.match(xml, /prst="rect"/);
+  assert.match(xml, /Diagram/);
+  assert.match(xml, /<p:fade\/>/);
+  assert.equal((xml.match(/<p:sp>/g) || []).length, 3);
+});
+
+test('freeform templates consist of positioned, editable objects', () => {
+  const { template } = require('../slide-canvas.js');
+  const objects = template('comparison', ['111111', 'EEEEEE', '55CCAA']);
+  assert.equal(objects.filter(object => object.kind === 'rectangle').length, 2);
+  assert.ok(objects.every(object => object.x + object.w <= 100 && object.y + object.h <= 100));
+});

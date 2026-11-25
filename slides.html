@@ -9,6 +9,8 @@
   <script src="./vendor/jszip-3.10.1.min.js" defer></script>
   <script src="./vendor/pptxgen-3.12.0.min.js" defer></script>
   <script src="./library-store.js" defer></script>
+  <script src="./slide-canvas.js" defer></script>
+  <script src="./slide-canvas-ui.js" defer></script>
   <script src="./slides.js" defer></script>
 </head>
 <body>
@@ -36,10 +38,10 @@
     <section class="inspector" aria-label="Slide settings">
       <h2>Edit slide</h2>
       <label>Title <input id="slide-title" maxlength="180"></label>
-      <label>Content <textarea id="slide-body" rows="5" maxlength="3000"></textarea></label>
+      <label id="body-controls">Content <textarea id="slide-body" rows="5" maxlength="3000"></textarea></label>
       <div class="options">
         <label>Layout
-          <select id="layout"><option value="cover">Title slide</option><option value="text">Title and text</option><option value="bullets">Bullet list</option><option value="image">Text and image</option></select>
+          <select id="layout"><option value="cover">Title slide</option><option value="text">Title and text</option><option value="bullets">Bullet list</option><option value="image">Text and image</option><option value="freeform">Freeform canvas</option></select>
         </label>
         <label>Theme
           <select id="theme"><option value="ink">Midnight</option><option value="paper">Paper</option><option value="forest">Forest</option><option value="coral">Coral</option></select>
@@ -56,6 +58,31 @@
         <label>Image description <input id="image-description" maxlength="250"></label>
         <button id="clear-image">Remove image</button>
       </div>
+      <section id="freeform-controls" hidden>
+        <h3>Canvas objects</h3>
+        <div id="object-additions" class="file-actions">
+          <button id="add-text">Add text</button><button id="add-rectangle">Add rectangle</button><button id="add-ellipse">Add ellipse</button>
+          <label class="file-button">Add image<input id="add-object-image" type="file" accept="image/jpeg,image/png"></label>
+        </div>
+        <label id="object-picker-label" hidden>Selected object<select id="object-picker"></select></label>
+        <p class="canvas-help">Drag an object or focus it and use the arrow keys.</p>
+        <div id="object-fields" hidden>
+          <label id="object-description"><span id="object-text-label">Text</span><textarea id="object-text" rows="3" maxlength="1200"></textarea></label>
+          <div class="options">
+            <label id="object-color-label">Color<input type="color" id="object-color"></label>
+            <label id="object-size-label">Font size<input type="number" id="object-size" min="12" max="72"></label>
+            <label>Left (%)<input type="number" id="object-x" min="0" max="95" step="0.1"></label>
+            <label>Top (%)<input type="number" id="object-y" min="0" max="95" step="0.1"></label>
+            <label>Width (%)<input type="number" id="object-w" min="5" max="100" step="0.1"></label>
+            <label>Height (%)<input type="number" id="object-h" min="5" max="100" step="0.1"></label>
+          </div>
+          <div class="file-actions"><button id="object-front">Bring forward</button><button id="object-back">Send back</button><button id="object-copy">Duplicate object</button><button id="object-delete">Remove object</button></div>
+        </div>
+      </section>
+      <label>New slide template
+        <select id="template"><option value="title">Title and subtitle</option><option value="comparison">Two-column comparison</option><option value="quote">Quotation</option></select>
+      </label>
+      <button id="apply-template">Insert template slide</button>
       <button id="apply-theme">Apply theme to all slides</button>
       <div class="file-actions"><button id="backup">Save editable copy</button><label class="file-button">Open editable copy<input type="file" id="restore" accept=".json,application/json"></label></div>
     </section>
