@@ -19,5 +19,5 @@ test('the offline shell caches the local icon library', () => {
   assert.match(serviceWorker, /lumina-docs-shell-v\d+/);
   assert.match(serviceWorker, /\.\/vendor\/lucide-1\.79\.0\.min\.js/);
   assert.doesNotMatch(serviceWorker, /unpkg\.com\/lucide/);
-  assert.match(serviceWorker, /request\.mode === 'navigate'[\s\S]*?await fetch\(request\)[\s\S]*?caches\.match\('\.\/index\.html'\)/);
+  assert.match(serviceWorker, /request\.mode === 'navigate'[\s\S]*?await fetch\(request\)[\s\S]*?caches\.match\(shellPage\)/);
 });
