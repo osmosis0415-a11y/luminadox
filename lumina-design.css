@@ -1,29 +1,29 @@
 /* Shared application surfaces and navigation. Slide and document content keep their own styles. */
 :root {
-  --lumina-bg:#f4f6fb;
+  --lumina-bg:#f4f6f8;
   --lumina-surface:#ffffff;
-  --lumina-soft:#edf0fa;
+  --lumina-soft:#edf1f5;
   --lumina-line:#d9dfed;
-  --lumina-ink:#17213a;
-  --lumina-muted:#4c5b76;
-  --lumina-accent:#4338b5;
+  --lumina-ink:#1f2937;
+  --lumina-muted:#37465b;
+  --lumina-accent:#2e4c77;
   --lumina-on-accent:#fff;
-  --lumina-selected:#eeebff;
+  --lumina-selected:#e5edf7;
   --lumina-focus:#a75800;
   --lumina-shadow:0 12px 32px #1b285b0c,0 2px 6px #1b285b0a;
   --lumina-radius:1rem;
   --lumina-gutter:clamp(.875rem,3vw,2rem);
 }
 .dark:root {
-  --lumina-bg:#101625;--lumina-surface:#192235;--lumina-soft:#222d45;--lumina-line:#3a4765;
-  --lumina-ink:#edf1ff;--lumina-muted:#b2bfd9;--lumina-accent:#b6adff;--lumina-on-accent:#1a123f;
-  --lumina-selected:#302656;--lumina-focus:#ffc773;--lumina-shadow:0 12px 32px #02061440;
+  --lumina-bg:#111923;--lumina-surface:#1c2735;--lumina-soft:#253346;--lumina-line:#3a4765;
+  --lumina-ink:#f0f4f8;--lumina-muted:#c2cddb;--lumina-accent:#b5d0f5;--lumina-on-accent:#152337;
+  --lumina-selected:#2b3d55;--lumina-focus:#ffc773;--lumina-shadow:0 12px 32px #02061440;
 }
 @media(prefers-color-scheme:dark) {
   :root:has(body.lumina-app) {
-    --lumina-bg:#101625;--lumina-surface:#192235;--lumina-soft:#222d45;--lumina-line:#3a4765;
-    --lumina-ink:#edf1ff;--lumina-muted:#b2bfd9;--lumina-accent:#b6adff;--lumina-on-accent:#1a123f;
-    --lumina-selected:#302656;--lumina-focus:#ffc773;--lumina-shadow:0 12px 32px #02061440;color-scheme:dark;
+    --lumina-bg:#111923;--lumina-surface:#1c2735;--lumina-soft:#253346;--lumina-line:#3a4765;
+    --lumina-ink:#f0f4f8;--lumina-muted:#c2cddb;--lumina-accent:#b5d0f5;--lumina-on-accent:#152337;
+    --lumina-selected:#2b3d55;--lumina-focus:#ffc773;--lumina-shadow:0 12px 32px #02061440;color-scheme:dark;
   }
 }
 :root:has(body.lumina-app){background:var(--lumina-bg);color:var(--lumina-ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -57,12 +57,12 @@
   border-radius:.64rem;width:2.15rem;height:2.15rem;font-size:1.05rem;font-weight:800
 }
 .lumina-shell .lumina-nav {display:flex;gap:.25rem;margin:0;padding:0;max-width:none;flex-wrap:wrap;align-items:center}
-.lumina-nav a {
+.lumina-shell .lumina-nav a {
   text-decoration:none;display:flex;align-items:center;gap:.4rem;padding:.5rem .75rem;min-height:42px;
   color:var(--lumina-muted);border-radius:.6rem;font-size:.875rem;font-weight:670;white-space:nowrap
 }
-.lumina-nav a:hover {background:var(--lumina-soft);color:var(--lumina-accent)}
-.lumina-nav a[aria-current=page]{background:var(--lumina-selected);color:var(--lumina-accent)}
+.lumina-shell .lumina-nav a:hover {background:var(--lumina-soft);color:var(--lumina-accent)}
+.lumina-shell .lumina-nav a[aria-current=page]{background:var(--lumina-selected);color:var(--lumina-accent)}
 .lumina-nav svg,.workspace-create svg,.pdf-shortcut svg{width:1rem;height:1rem;flex:none}
 .lumina-app .screen-title {margin:0;font-size:clamp(1.95rem,4.8vw,3.25rem);font-weight:760;letter-spacing:-.045em;line-height:1.06}
 .lumina-app .screen-intro {margin:.6rem 0 0;color:var(--lumina-muted);max-width:55ch;line-height:1.55}
@@ -184,4 +184,29 @@
 }
 @media (max-width:440px) {
   .lumina-nav svg {display:none}
+}
+/* Interface text uses the shared palette in either color scheme. */
+.lumina-app .screen-title { color: var(--lumina-ink); }
+.lumina-app .data-actions label,
+.lumina-app .deck-name,
+.lumina-app .canvas-help,
+.lumina-app .file-meta,
+.lumina-app .details {
+  color: var(--lumina-muted);
+}
+.lumina-app input:not([type="color"])::placeholder,
+.lumina-app textarea::placeholder {
+  color: var(--lumina-muted);
+  opacity: 1;
+}
+.lumina-app .research-dialog {
+  background: var(--lumina-surface);
+  color: var(--lumina-ink);
+  border-color: var(--lumina-line);
+}
+.lumina-app .research-dialog button { color: var(--lumina-accent); }
+.lumina-app .show-controls button {
+  background: #272d49;
+  color: #fff;
+  border-color: #67739b;
 }
