@@ -5,15 +5,19 @@
   <title>Data · Lumina Docs</title>
   <link rel="stylesheet" href="./lumina-design.css?v=readable-1"><link rel="stylesheet" href="./data-tools.css"><link rel="stylesheet" href="./research-tools.css">
   <script src="./library-store.js" defer></script><script src="./research-tools.js" defer></script><script src="./research-ui.js" defer></script><script src="./data-tools.js" defer></script>
+  <link rel="stylesheet" href="./lumina-bento.css?v=1">
 </head>
-<body class="lumina-app">
+<body class="lumina-app lumina-bento">
 <header class="lumina-shell"><div class="lumina-shell-inner">
   <a class="lumina-brand" href="./"><span class="lumina-mark" aria-hidden="true">L</span>Lumina Docs</a>
   <nav class="lumina-nav" aria-label="App navigation"><a href="./workspace.html">Workspace</a><a href="./docs.html">Docs</a><a href="./slides.html">Slides</a><a href="./pdf-tools.html">PDF Tools</a></nav>
 </div></header>
 <main class="data-screen">
-  <h1 class="screen-title">Data workspace</h1><p class="screen-intro">Open a CSV, inspect the rows, calculate a new column, or create a chart for Docs and Slides.</p>
-  <div class="data-actions">
+  <section class="bento-feature" aria-labelledby="data-title">
+    <h1 id="data-title" class="screen-title">Data workspace</h1>
+    <p class="screen-intro">Open a CSV, inspect the rows, calculate a new column, or create a chart for Docs and Slides.</p>
+  </section>
+  <div class="data-actions bento-panel bento-import">
     <label>Open CSV <input id="csv" type="file" accept=".csv,text/csv"></label>
     <button id="chart" type="button" disabled>Create chart</button><button id="download-data" type="button" disabled>Download CSV</button>
   </div>

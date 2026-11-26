@@ -551,8 +551,9 @@
         opacity: 1;
       }
     </style>
+  <link rel="stylesheet" href="./lumina-bento.css?v=1">
 </head>
-<body class="lumina-docs bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans h-[100dvh] flex flex-col overflow-hidden transition-colors duration-200 touch-manipulation">
+<body class="lumina-docs lumina-bento-docs bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans h-[100dvh] flex flex-col overflow-hidden transition-colors duration-200 touch-manipulation">
 
     <!-- Exit Focus Mode Floating Button -->
     <button id="exit-focus-btn" onclick="toggleFocusMode()" class="hidden fixed top-5 right-5 z-50 items-center gap-2 px-4 py-2 rounded-full bg-slate-900/80 dark:bg-white/90 text-white dark:text-slate-900 text-xs font-medium shadow-lg backdrop-blur hover:scale-105 transition">
@@ -909,7 +910,7 @@
     </div>
 
     <!-- ==================== MAIN WORKSPACE ==================== -->
-    <div class="flex-1 flex overflow-hidden relative">
+    <div class="docs-bento-workspace flex-1 flex overflow-hidden relative">
         <!-- LEFT SIDEBAR: Documents, Live Outline, Citations & Review Comments -->
         <aside id="left-sidebar" class="w-[82vw] max-w-xs md:w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col shrink-0 transition-transform duration-200 absolute md:relative inset-y-0 left-0 z-30 shadow-2xl md:shadow-none -translate-x-full md:translate-x-0">
             <!-- Tabs -->

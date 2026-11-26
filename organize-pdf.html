@@ -12,8 +12,9 @@
   <link rel="stylesheet" href="./lumina-design.css?v=readable-1">
   <script src="./vendor/lucide-1.79.0.min.js" defer></script>
   <script src="./lumina-design.js" defer></script>
+  <link rel="stylesheet" href="./lumina-bento.css?v=1">
 </head>
-<body class="lumina-app lumina-organize">
+<body class="lumina-app lumina-bento lumina-organize">
   <header class="lumina-shell">
   <div class="lumina-shell-inner">
     <a class="lumina-brand" href="./" aria-label="Lumina Docs home"><span class="lumina-mark" aria-hidden="true">L</span>Lumina Docs</a>
@@ -30,8 +31,10 @@
       <h1 class="screen-title">Organize PDF pages</h1>
       <p class="screen-intro">Drag pages or use the move buttons to reorder them. You’ll download a new PDF. Removing pages can discard bookmarks and interactive forms.</p>
     </section>
-    <label class="file-picker">Choose a PDF <input id="source-file" type="file" accept=".pdf,application/pdf"></label>
-    <p id="document-name"></p>
+    <div class="bento-panel bento-import">
+      <label class="file-picker">Choose a PDF <input id="source-file" type="file" accept=".pdf,application/pdf"></label>
+      <p id="document-name"></p>
+    </div>
     <fieldset id="controls" disabled>
       <legend>Page actions</legend>
       <button id="select-all">Select all</button>
