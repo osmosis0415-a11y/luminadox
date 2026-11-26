@@ -12,61 +12,65 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="./lumina-design.css">
   <link rel="stylesheet" href="./home.css">
-  <script src="./home.js"></script>
+  <script defer src="./home.js"></script>
   <script defer src="./vendor/lucide-1.79.0.min.js"></script>
   <script defer src="./lumina-design.js"></script>
 </head>
 <body class="lumina-app lumina-home">
   <a class="home-skip" href="#main">Skip to content</a>
-  <header class="lumina-shell">
-    <div class="lumina-shell-inner">
-      <a class="lumina-brand" href="./" aria-label="Lumina Docs home"><span class="lumina-mark" aria-hidden="true">L</span>Lumina Docs</a>
-      <nav class="lumina-nav" aria-label="App navigation">
-        <a href="./workspace.html"><i data-lucide="layout-grid" aria-hidden="true"></i>Workspace</a>
-        <a href="./docs.html"><i data-lucide="file-text" aria-hidden="true"></i>Docs</a>
-        <a href="./slides.html"><i data-lucide="presentation" aria-hidden="true"></i>Slides</a>
-        <a href="./pdf-tools.html"><i data-lucide="files" aria-hidden="true"></i>PDF Tools</a>
-      </nav>
+  <div class="bento-header">
+    <div class="bento-announcement">Local workspace · Your files stay in this browser</div>
+    <header class="bento-bar">
+      <details class="bento-menu">
+        <summary aria-label="Open app menu"><span aria-hidden="true"></span></summary>
+        <nav aria-label="Apps">
+          <a href="./workspace.html">Workspace</a>
+          <a href="./docs.html">Docs</a>
+          <a href="./slides.html">Slides</a>
+          <a href="./data.html">Data</a>
+          <a href="./pdf-tools.html">PDF Tools</a>
+        </nav>
+      </details>
+      <a class="bento-brand" href="./" aria-label="Lumina Docs home">lumina<span>.</span></a>
+      <a class="bento-profile" href="./workspace.html" aria-label="Your workspace"><i data-lucide="user-round" aria-hidden="true"></i></a>
+    </header>
+  </div>
+  <div class="bento-ticker">
+    <div class="bento-track">
+      <div><span><i data-lucide="layout-grid" aria-hidden="true"></i>Workspace</span><span><i data-lucide="file-text" aria-hidden="true"></i>Docs</span><span><i data-lucide="presentation" aria-hidden="true"></i>Slides</span><span><i data-lucide="table" aria-hidden="true"></i>Data</span><span><i data-lucide="files" aria-hidden="true"></i>PDF Tools</span></div>
+      <div aria-hidden="true"><span><i data-lucide="layout-grid" aria-hidden="true"></i>Workspace</span><span><i data-lucide="file-text" aria-hidden="true"></i>Docs</span><span><i data-lucide="presentation" aria-hidden="true"></i>Slides</span><span><i data-lucide="table" aria-hidden="true"></i>Data</span><span><i data-lucide="files" aria-hidden="true"></i>PDF Tools</span></div>
     </div>
-  </header>
-  <main class="home-main" id="main">
-    <section class="home-hero" aria-labelledby="home-title">
-      <div class="home-lead">
-        <h1 id="home-title">Write. Present.<br><span>Get it ready to share.</span></h1>
-        <p>Draft documents, build slide decks, and organize PDFs in one workspace. Start with a blank page or turn your thesis into an editable defense deck.</p>
-        <div class="home-actions">
-          <a class="home-button home-primary" href="./workspace.html">Open Workspace<i data-lucide="arrow-right" aria-hidden="true"></i></a>
-          <a class="home-button" href="./docs.html?new=blank">New document</a>
+  </div>
+  <main id="main" class="home-main">
+    <h1>Your work, in one place.</h1>
+    <div class="bento-grid">
+      <section class="bento-hero" aria-label="Explore Lumina">
+        <div class="bento-slides" tabindex="0" aria-label="Swipe or use the arrow keys to explore">
+          <article class="bento-slide bento-slide-1" aria-label="Workspace">
+            <div class="bento-copy"><span class="bento-label"><i data-lucide="layout-grid" aria-hidden="true"></i>Workspace</span><h2>Your files, ready to pick up.</h2><p>Keep documents, decks, and backups together.</p><a class="bento-button" href="./workspace.html">Open workspace</a></div>
+            <div class="bento-art" aria-hidden="true"><div class="bento-paper"><span></span><span></span><span></span></div><div class="bento-window"><i data-lucide="layout-grid"></i></div></div>
+          </article>
+          <article class="bento-slide bento-slide-2" aria-label="Docs">
+            <div class="bento-copy"><span class="bento-label"><i data-lucide="file-text" aria-hidden="true"></i>Docs</span><h2>Make room for your next draft.</h2><p>Write, review, and export your documents.</p><a class="bento-button" href="./docs.html">Open Docs</a></div>
+            <div class="bento-art" aria-hidden="true"><div class="bento-paper"><span></span><span></span><span></span></div><div class="bento-window"><i data-lucide="file-text"></i></div></div>
+          </article>
+          <article class="bento-slide bento-slide-3" aria-label="Slides">
+            <div class="bento-copy"><span class="bento-label"><i data-lucide="presentation" aria-hidden="true"></i>Slides</span><h2>Give your ideas a stage.</h2><p>Build presentations with editable templates and speaker notes.</p><a class="bento-button" href="./slides.html">Open Slides</a></div>
+            <div class="bento-art" aria-hidden="true"><div class="bento-paper"><span></span><span></span><span></span></div><div class="bento-window"><i data-lucide="presentation"></i></div></div>
+          </article>
+          <article class="bento-slide bento-slide-4" aria-label="Data">
+            <div class="bento-copy"><span class="bento-label"><i data-lucide="table" aria-hidden="true"></i>Data</span><h2>Find the story in your data.</h2><p>Filter CSVs, calculate columns, and build charts.</p><a class="bento-button" href="./data.html">Open Data</a></div>
+            <div class="bento-art" aria-hidden="true"><div class="bento-paper"><span></span><span></span><span></span></div><div class="bento-window"><i data-lucide="table"></i></div></div>
+          </article>
         </div>
-      </div>
-      <div class="home-art" aria-hidden="true">
-        <div class="art-grid"></div>
-        <div class="art-paper"><div class="art-file"><i data-lucide="file-text"></i>Thesis draft</div><div class="art-rule"></div><div class="art-copy"></div><div class="art-copy art-short"></div><div class="art-copy"></div><div class="art-bars"><span></span><span></span><span></span><span></span></div></div>
-        <div class="art-slide"><div class="art-slide-label"><i data-lucide="presentation"></i>Defense deck</div><strong>Research<br>findings</strong><div class="art-slide-rule"></div></div>
-        <div class="art-pdf"><i data-lucide="files"></i>PDF tools</div>
-      </div>
-    </section>
-    <section class="home-tools" aria-labelledby="tools-title">
-      <h2 id="tools-title">What would you like to work on?</h2>
-      <div class="home-card-grid">
-        <a class="home-card" href="./docs.html">
-          <span class="home-card-icon"><i data-lucide="file-text" aria-hidden="true"></i></span><h3>Docs</h3>
-          <p>Write documents and theses with citations, comments, and Word export.</p><span class="home-card-action">Open Docs <i data-lucide="arrow-right" aria-hidden="true"></i></span>
-        </a>
-        <a class="home-card" href="./slides.html">
-          <span class="home-card-icon"><i data-lucide="presentation" aria-hidden="true"></i></span><h3>Slides</h3>
-          <p>Build a deck with editable templates, transitions, and speaker notes.</p><span class="home-card-action">Open Slides <i data-lucide="arrow-right" aria-hidden="true"></i></span>
-        </a>
-        <a class="home-card" href="./pdf-tools.html">
-          <span class="home-card-icon"><i data-lucide="files" aria-hidden="true"></i></span><h3>PDF Tools</h3>
-          <p>Merge, reorder, rotate, and convert files directly in your browser.</p><span class="home-card-action">Open PDF Tools <i data-lucide="arrow-right" aria-hidden="true"></i></span>
-        </a>
-        <a class="home-card" href="./data.html">
-          <span class="home-card-icon"><i data-lucide="table" aria-hidden="true"></i></span><h3>Data</h3>
-          <p>Sort and filter a CSV, add calculated columns, or make a chart.</p><span class="home-card-action">Open Data <i data-lucide="arrow-right" aria-hidden="true"></i></span>
-        </a>
-      </div>
-    </section>
+        <div class="bento-pagination" aria-label="Choose a feature">
+          <button type="button" aria-label="Show Workspace" aria-current="true"></button><button type="button" aria-label="Show Docs"></button><button type="button" aria-label="Show Slides"></button><button type="button" aria-label="Show Data"></button>
+        </div>
+      </section>
+      <a class="bento-tile bento-doc" href="./docs.html?new=blank"><i data-lucide="file-text" aria-hidden="true"></i><div><h2>New document</h2><p>Start with a blank page.</p></div></a>
+      <a class="bento-tile bento-deck" href="./slides.html"><i data-lucide="presentation" aria-hidden="true"></i><div><h2>Slides</h2><p>Build a presentation.</p></div></a>
+      <a class="bento-tile bento-pdf" href="./pdf-tools.html"><i data-lucide="files" aria-hidden="true"></i><div><h2>PDF tools</h2><p>Merge, reorder, and convert.</p></div></a>
+    </div>
   </main>
 </body>
 </html>

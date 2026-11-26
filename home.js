@@ -16,3 +16,31 @@ if (typeof window !== 'undefined') {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   }
 }
+
+if (typeof document !== 'undefined') {
+  const carousel = document.querySelector('.bento-slides');
+  const dots = [...document.querySelectorAll('.bento-pagination button')];
+  const slides = [...carousel.children];
+
+  function selectSlide(index) {
+    carousel.scrollTo({
+      left: carousel.clientWidth * index,
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'
+    });
+  }
+
+  dots.forEach((dot, index) => dot.addEventListener('click', () => selectSlide(index)));
+  carousel.addEventListener('scroll', () => {
+    const current = Math.round(carousel.scrollLeft / carousel.clientWidth);
+    dots.forEach((dot, index) => {
+      if (index === current) dot.setAttribute('aria-current', 'true');
+      else dot.removeAttribute('aria-current');
+    });
+  }, { passive: true });
+
+  slides.forEach((slide, index) => {
+    slide.addEventListener('focusin', () => {
+      carousel.scrollTo({ left: carousel.clientWidth * index, behavior: 'instant' });
+    });
+  });
+}
