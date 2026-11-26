@@ -11,8 +11,8 @@
   <link rel="apple-touch-icon" href="./icon-192.png">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="./lumina-design.css?v=readable-1">
-  <link rel="stylesheet" href="./home.css?v=bento-2">
-  <script defer src="./home.js?v=bento-1"></script>
+  <link rel="stylesheet" href="./home.css?v=bento-3">
+  <script defer src="./home.js?v=bento-2"></script>
   <script defer src="./vendor/lucide-1.79.0.min.js"></script>
   <script defer src="./lumina-design.js"></script>
 </head>
@@ -35,14 +35,15 @@
       <a class="bento-profile" href="./workspace.html" aria-label="Your workspace"><i data-lucide="user-round" aria-hidden="true"></i></a>
     </header>
   </div>
-  <div class="bento-ticker">
-    <div class="bento-track">
-      <div><span><i data-lucide="layout-grid" aria-hidden="true"></i>Workspace</span><span><i data-lucide="file-text" aria-hidden="true"></i>Docs</span><span><i data-lucide="presentation" aria-hidden="true"></i>Slides</span><span><i data-lucide="table" aria-hidden="true"></i>Data</span><span><i data-lucide="files" aria-hidden="true"></i>PDF Tools</span></div>
-      <div aria-hidden="true"><span><i data-lucide="layout-grid" aria-hidden="true"></i>Workspace</span><span><i data-lucide="file-text" aria-hidden="true"></i>Docs</span><span><i data-lucide="presentation" aria-hidden="true"></i>Slides</span><span><i data-lucide="table" aria-hidden="true"></i>Data</span><span><i data-lucide="files" aria-hidden="true"></i>PDF Tools</span></div>
-    </div>
-  </div>
-  <main id="main" class="home-main">
-    <h1>Your work, in one place.</h1>
+  <nav class="home-quick-nav" aria-label="Tools">
+    <a href="./workspace.html"><i data-lucide="layout-grid" aria-hidden="true"></i>Workspace</a>
+    <a href="./docs.html"><i data-lucide="file-text" aria-hidden="true"></i>Docs</a>
+    <a href="./slides.html"><i data-lucide="presentation" aria-hidden="true"></i>Slides</a>
+    <a href="./data.html"><i data-lucide="table" aria-hidden="true"></i>Data</a>
+    <a href="./pdf-tools.html"><i data-lucide="files" aria-hidden="true"></i>PDF Tools</a>
+  </nav>
+  <main id="main" class="home-main" tabindex="-1">
+    <div class="home-heading"><h1>Your work, in one place.</h1><a href="./docs.html?new=thesis">Start a thesis</a></div>
     <div class="bento-grid">
       <section class="bento-hero" aria-label="Explore Lumina">
         <div class="bento-slides" tabindex="0" aria-label="Swipe or use the arrow keys to explore">

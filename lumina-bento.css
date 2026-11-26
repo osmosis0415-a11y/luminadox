@@ -137,3 +137,56 @@
   .lumina-bento :is(.workspace-screen, .data-screen, .review-screen, .advisor-screen, #review-content:not([hidden])),
   .lumina-bento.lumina-organize main { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Shared controls and feedback for the tool panels. */
+.lumina-skip {
+  position: fixed; z-index: 10; inset: .5rem auto auto .5rem;
+  transform: translateY(-160%); padding: .65rem 1rem;
+  border-radius: .65rem; background: var(--lumina-surface); color: var(--lumina-ink);
+}
+.lumina-skip:focus { transform: none; }
+.lumina-bento :focus-visible, .lumina-bento-docs #formatting-ribbon :focus-visible {
+  outline: 2px solid var(--lumina-focus, #a75800); outline-offset: 2px;
+}
+.lumina-bento .lumina-nav a[aria-current=location] { background: var(--lumina-selected); color: var(--lumina-accent); }
+.lumina-bento .lumina-shell .lumina-nav a { min-height: 44px; }
+.lumina-bento .tool-status:not(:empty) {
+  padding: .65rem .8rem; border: 1px solid var(--lumina-line); border-radius: .75rem;
+  background: var(--lumina-soft); color: var(--lumina-ink); line-height: 1.45;
+}
+.lumina-bento .tool-status:empty { min-height: 0; margin: 0; }
+.lumina-bento .tool-help { color: var(--lumina-muted); font-size: .875rem; line-height: 1.45; }
+.lumina-bento .data-actions .tool-help { flex-basis: 100%; order: 1; margin: 0; }
+.lumina-bento .workspace-library #files .library-empty {
+  display: block; padding: 1rem; border: 1px dashed var(--lumina-line);
+  background: var(--lumina-soft); color: var(--lumina-ink);
+}
+.library-empty p { margin: .3rem 0 0; color: var(--lumina-muted); }
+.lumina-bento.lumina-slides .workspace { grid-template-columns: minmax(8rem, 11rem) minmax(0, 1fr) minmax(15rem, 18rem); }
+.lumina-bento.lumina-slides .stage { padding: clamp(.6rem, 1.4vw, 1rem); }
+.lumina-bento.lumina-slides .stage .notes { margin-top: .6rem; }
+.lumina-bento-docs #formatting-ribbon {
+  overflow-x: auto; scrollbar-width: thin;
+}
+.lumina-bento-docs #formatting-ribbon #more-tools { white-space: nowrap; }
+.lumina-bento-docs #formatting-ribbon :is(#btn-bold, #btn-italic, #btn-underline) {
+  min-width: 36px; min-height: 36px;
+}
+@media (min-width: 621px) and (max-width: 1050px) {
+  .lumina-bento.lumina-slides .workspace { grid-template-columns: minmax(8rem, 11rem) minmax(0, 1fr); }
+}
+@media (max-width: 620px) {
+  .lumina-bento .lumina-shell .lumina-nav { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; }
+  .lumina-bento .lumina-shell .lumina-nav a { padding-inline: .1rem; white-space: normal; text-align: center; line-height: 1.2; }
+  .lumina-bento .lumina-shell .lumina-nav svg { display: none; }
+  .lumina-bento.lumina-slides .workspace { grid-template-columns: minmax(0, 1fr); }
+  .lumina-bento.lumina-slides .sidebar #slide-list { display: flex; overflow-x: auto; padding-bottom: .25rem; }
+  .lumina-bento.lumina-slides .sidebar #slide-list > li { flex: 0 0 8.5rem; }
+  .lumina-bento.lumina-slides .sidebar .thumb { width: 100%; }
+  .lumina-bento .workspace-library .filters { grid-template-columns: minmax(0, 1fr); }
+  .lumina-bento :is(.data-actions, .bento-import) input[type=file] { width: 100%; min-width: 0; }
+  .lumina-bento-docs #formatting-ribbon :is(#btn-bold, #btn-italic, #btn-underline) { min-height: 44px; }
+}
+@media print {
+  .lumina-skip { display: none; }
+}

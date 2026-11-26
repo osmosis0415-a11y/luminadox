@@ -551,7 +551,7 @@
         opacity: 1;
       }
     </style>
-  <link rel="stylesheet" href="./lumina-bento.css?v=1">
+  <link rel="stylesheet" href="./lumina-bento.css?v=2">
 </head>
 <body class="lumina-docs lumina-bento-docs bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans h-[100dvh] flex flex-col overflow-hidden transition-colors duration-200 touch-manipulation">
 
@@ -700,7 +700,7 @@
     </header>
 
     <!-- ==================== FORMATTING RIBBON ==================== -->
-    <div id="formatting-ribbon" role="group" aria-label="Document formatting" class="bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200 dark:border-slate-800 px-2 sm:px-3 py-1.5 flex items-center gap-1 shrink-0 z-20">
+    <div id="formatting-ribbon" role="region" tabindex="0" aria-label="Document formatting" class="bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200 dark:border-slate-800 px-2 sm:px-3 py-1.5 flex items-center gap-1 shrink-0 z-20">
         <button id="more-tools" type="button" aria-expanded="false" class="shrink-0 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-200" onpointerdown="event.preventDefault()" onclick="toggleMoreTools()">More tools</button>
         <!-- Undo / Redo -->
         <div class="flex items-center gap-0.5 pr-1.5 border-r border-slate-200 dark:border-slate-700 shrink-0">
@@ -752,13 +752,13 @@
 
         <!-- Inline Formatting -->
         <div class="flex items-center gap-0.5 px-1.5 border-r border-slate-200 dark:border-slate-700 shrink-0">
-            <button id="btn-bold" onpointerdown="event.preventDefault()" onclick="execCmd('bold')" title="Bold (Ctrl+B)" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button id="btn-bold" aria-label="Bold" aria-pressed="false" onpointerdown="event.preventDefault()" onclick="execCmd('bold')" title="Bold (Ctrl+B)" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="bold" class="w-4 h-4"></i>
             </button>
-            <button id="btn-italic" onpointerdown="event.preventDefault()" onclick="execCmd('italic')" title="Italic (Ctrl+I)" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button id="btn-italic" aria-label="Italic" aria-pressed="false" onpointerdown="event.preventDefault()" onclick="execCmd('italic')" title="Italic (Ctrl+I)" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="italic" class="w-4 h-4"></i>
             </button>
-            <button id="btn-underline" onpointerdown="event.preventDefault()" onclick="execCmd('underline')" title="Underline (Ctrl+U)" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+            <button id="btn-underline" aria-label="Underline" aria-pressed="false" onpointerdown="event.preventDefault()" onclick="execCmd('underline')" title="Underline (Ctrl+U)" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
                 <i data-lucide="underline" class="w-4 h-4"></i>
             </button>
             <button data-more-tool hidden id="btn-strike" onpointerdown="event.preventDefault()" onclick="execCmd('strikeThrough')" title="Strikethrough" class="tb-btn p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
@@ -2819,7 +2819,9 @@
             cmds.forEach(({ id, cmd }) => {
                 const btn = document.getElementById(id);
                 if (btn) {
-                    btn.classList.toggle('active', document.queryCommandState(cmd));
+                    const active = document.queryCommandState(cmd);
+                    btn.classList.toggle('active', active);
+                    if (btn.hasAttribute('aria-pressed')) btn.setAttribute('aria-pressed', String(active));
                 }
             });
         }

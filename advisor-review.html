@@ -1,19 +1,26 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Advisor review · Lumina Docs</title>
-<link rel="stylesheet" href="./lumina-design.css?v=readable-1"><link rel="stylesheet" href="./workspace.css"><script src="./advisor-review.js" defer></script>  <link rel="stylesheet" href="./lumina-bento.css?v=1">
+<link rel="stylesheet" href="./lumina-design.css?v=readable-1"><link rel="stylesheet" href="./workspace.css"><script src="./advisor-review.js" defer></script>  <link rel="stylesheet" href="./lumina-bento.css?v=2">
 </head>
-<body class="lumina-app lumina-bento"><header class="lumina-shell"><div class="lumina-shell-inner">
+<body class="lumina-app lumina-bento">
+<a class="lumina-skip" href="#tool-main">Skip to main content</a><header class="lumina-shell"><div class="lumina-shell-inner">
   <a class="lumina-brand" href="./"><span class="lumina-mark" aria-hidden="true">L</span>Lumina Docs</a>
-  <nav class="lumina-nav" aria-label="App navigation"><a href="./docs.html">Docs</a><a href="./workspace.html">Workspace</a></nav>
+  <nav class="lumina-nav" aria-label="App navigation">
+      <a href="./workspace.html">Workspace</a>
+      <a href="./docs.html" aria-current="location">Docs</a>
+      <a href="./slides.html">Slides</a>
+      <a href="./data.html">Data</a>
+      <a href="./pdf-tools.html">PDF Tools</a>
+    </nav>
 </div></header>
-<main class="advisor-screen">
+<main id="tool-main" tabindex="-1" class="advisor-screen">
 <section class="bento-feature" aria-labelledby="advisor-title">
   <h1 id="advisor-title" class="screen-title">Advisor review</h1>
   <p class="screen-intro">Open a review copy from Lumina Docs. Feedback is downloaded as a separate file so the author can import it without replacing their draft.</p>
 </section>
 <div class="bento-panel bento-import">
   <label>Open review copy <input id="review-copy" type="file" accept=".json,application/json"></label>
-  <p id="review-state" role="status"></p>
+  <p id="review-state" class="tool-status" role="status"></p>
 </div>
 <section id="review-content" hidden><h2 id="review-title"></h2><textarea id="review-text" aria-label="Manuscript text" readonly rows="14" cols="70" style="max-width:100%"></textarea>
 <form id="review-feedback"><label>Your name <input id="reviewer" required maxlength="100"></label><label>Feedback <textarea id="feedback" required maxlength="5000" rows="5"></textarea></label><button type="submit">Download feedback</button></form></section>

@@ -30,6 +30,21 @@ if (typeof document !== 'undefined') {
   }
 
   dots.forEach((dot, index) => dot.addEventListener('click', () => selectSlide(index)));
+  carousel.addEventListener('keydown', event => {
+    if (event.target !== carousel) return;
+    const current = Math.round(carousel.scrollLeft / carousel.clientWidth);
+    const steps = { ArrowLeft: current - 1, ArrowRight: current + 1, Home: 0, End: slides.length - 1 };
+    if (!Object.hasOwn(steps, event.key)) return;
+    event.preventDefault();
+    selectSlide(Math.max(0, Math.min(slides.length - 1, steps[event.key])));
+  });
+
+  const menu = document.querySelector('.bento-menu');
+  menu.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || !menu.open) return;
+    menu.open = false;
+    menu.querySelector('summary').focus();
+  });
   carousel.addEventListener('scroll', () => {
     const current = Math.round(carousel.scrollLeft / carousel.clientWidth);
     dots.forEach((dot, index) => {

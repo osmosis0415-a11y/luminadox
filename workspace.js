@@ -101,7 +101,12 @@ function draw() {
   }));
   if (visible.length === 0) {
     const empty = document.createElement('li');
-    empty.textContent = rows.length ? 'No files match these filters.' : 'Create a document or add a PDF to get started.';
+    empty.className = 'library-empty';
+    const title = document.createElement('strong');
+    title.textContent = rows.length ? 'No matching files' : 'Your library is empty';
+    const hint = document.createElement('p');
+    hint.textContent = rows.length ? 'Try a different search or clear your filters.' : 'Create a document, start a thesis, or add a PDF. Saved files appear here.';
+    empty.append(title, hint);
     list.append(empty);
   }
 }

@@ -5,20 +5,28 @@
   <title>Data · Lumina Docs</title>
   <link rel="stylesheet" href="./lumina-design.css?v=readable-1"><link rel="stylesheet" href="./data-tools.css"><link rel="stylesheet" href="./research-tools.css">
   <script src="./library-store.js" defer></script><script src="./research-tools.js" defer></script><script src="./research-ui.js" defer></script><script src="./data-tools.js" defer></script>
-  <link rel="stylesheet" href="./lumina-bento.css?v=1">
+  <link rel="stylesheet" href="./lumina-bento.css?v=2">
 </head>
 <body class="lumina-app lumina-bento">
+<a class="lumina-skip" href="#tool-main">Skip to main content</a>
 <header class="lumina-shell"><div class="lumina-shell-inner">
   <a class="lumina-brand" href="./"><span class="lumina-mark" aria-hidden="true">L</span>Lumina Docs</a>
-  <nav class="lumina-nav" aria-label="App navigation"><a href="./workspace.html">Workspace</a><a href="./docs.html">Docs</a><a href="./slides.html">Slides</a><a href="./pdf-tools.html">PDF Tools</a></nav>
+  <nav class="lumina-nav" aria-label="App navigation">
+      <a href="./workspace.html">Workspace</a>
+      <a href="./docs.html">Docs</a>
+      <a href="./slides.html">Slides</a>
+      <a href="./data.html" aria-current="page">Data</a>
+      <a href="./pdf-tools.html">PDF Tools</a>
+    </nav>
 </div></header>
-<main class="data-screen">
+<main id="tool-main" tabindex="-1" class="data-screen">
   <section class="bento-feature" aria-labelledby="data-title">
     <h1 id="data-title" class="screen-title">Data workspace</h1>
     <p class="screen-intro">Open a CSV, inspect the rows, calculate a new column, or create a chart for Docs and Slides.</p>
   </section>
   <div class="data-actions bento-panel bento-import">
-    <label>Open CSV <input id="csv" type="file" accept=".csv,text/csv"></label>
+    <label>Open CSV <input id="csv" type="file" accept=".csv,text/csv" aria-describedby="csv-help"></label>
+    <p id="csv-help" class="tool-help">Choose a CSV to enable charts, filters, and export.</p>
     <button id="chart" type="button" disabled>Create chart</button><button id="download-data" type="button" disabled>Download CSV</button>
   </div>
   <div class="data-panel" id="data-panel" hidden>
@@ -41,6 +49,6 @@
     <div class="data-scroll" tabindex="0" aria-label="CSV results"><table><thead id="head"></thead><tbody id="rows"></tbody></table></div>
     <div class="data-actions"><button id="previous" type="button">Previous</button><button id="next" type="button">Next</button></div>
   </div>
-  <p id="data-status" role="status"></p>
+  <p id="data-status" class="tool-status" role="status"></p>
 </main>
 </body></html>

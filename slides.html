@@ -19,9 +19,10 @@
   <link rel="stylesheet" href="./lumina-design.css?v=readable-1">
   <script src="./vendor/lucide-1.79.0.min.js" defer></script>
   <script src="./lumina-design.js" defer></script>
-  <link rel="stylesheet" href="./lumina-bento.css?v=1">
+  <link rel="stylesheet" href="./lumina-bento.css?v=2">
 </head>
 <body class="lumina-app lumina-bento lumina-slides">
+<a class="lumina-skip" href="#tool-main">Skip to main content</a>
   <header class="lumina-shell">
   <div class="lumina-shell-inner">
     <a class="lumina-brand" href="./" aria-label="Lumina Docs home"><span class="lumina-mark" aria-hidden="true">L</span>Lumina Docs</a>
@@ -29,6 +30,7 @@
       <a href="./workspace.html"><i data-lucide="layout-grid" aria-hidden="true"></i>Workspace</a>
       <a href="./docs.html"><i data-lucide="file-text" aria-hidden="true"></i>Docs</a>
       <a href="./slides.html" aria-current="page"><i data-lucide="presentation" aria-hidden="true"></i>Slides</a>
+      <a href="./data.html"><i data-lucide="table" aria-hidden="true"></i>Data</a>
       <a href="./pdf-tools.html"><i data-lucide="files" aria-hidden="true"></i>PDF Tools</a>
     </nav>
   </div>
@@ -37,9 +39,9 @@
     <label class="deck-name">Presentation <input id="deck-title" maxlength="100" value="Untitled presentation"></label>
     <div class="actions"><button id="present" class="primary">Present</button><button id="export">Export PowerPoint</button></div>
   </header>
-  <main class="workspace">
+  <main id="tool-main" tabindex="-1" class="workspace">
     <aside class="sidebar" aria-label="Slide list">
-      <div class="panel-title"><h1>Slides</h1><button id="add">+ Add slide</button></div>
+      <div class="panel-title"><h1>Slides</h1><button id="add">Add slide</button></div>
       <ol id="slide-list"></ol>
       <div class="slide-actions">
         <button id="up" aria-label="Move slide up">↑</button>
@@ -50,7 +52,7 @@
     </aside>
     <section class="stage" aria-label="Slide canvas">
       <div id="canvas" class="slide"></div>
-      <p id="save-status" role="status"></p>
+      <p id="save-status" class="tool-status" role="status"></p>
       <label class="notes">Speaker notes<textarea id="notes" rows="3" maxlength="5000" placeholder="What will you say on this slide?"></textarea></label>
     </section>
     <section class="inspector" aria-label="Slide settings">

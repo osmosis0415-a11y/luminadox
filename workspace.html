@@ -10,13 +10,14 @@
   <script src="./library-store.js" defer></script>
   <script src="./vendor/jszip-3.10.1.min.js" defer></script>
   <script src="./workspace-backup.js" defer></script>
-  <script src="./workspace.js" defer></script>
+  <script src="./workspace.js?v=2" defer></script>
   <link rel="stylesheet" href="./lumina-design.css?v=readable-1">
   <script src="./vendor/lucide-1.79.0.min.js" defer></script>
   <script src="./lumina-design.js" defer></script>
-  <link rel="stylesheet" href="./lumina-bento.css?v=1">
+  <link rel="stylesheet" href="./lumina-bento.css?v=2">
 </head>
 <body class="lumina-app lumina-bento lumina-workspace">
+<a class="lumina-skip" href="#tool-main">Skip to main content</a>
   <header class="lumina-shell">
   <div class="lumina-shell-inner">
     <a class="lumina-brand" href="./" aria-label="Lumina Docs home"><span class="lumina-mark" aria-hidden="true">L</span>Lumina Docs</a>
@@ -24,11 +25,12 @@
       <a href="./workspace.html" aria-current="page"><i data-lucide="layout-grid" aria-hidden="true"></i>Workspace</a>
       <a href="./docs.html"><i data-lucide="file-text" aria-hidden="true"></i>Docs</a>
       <a href="./slides.html"><i data-lucide="presentation" aria-hidden="true"></i>Slides</a>
+      <a href="./data.html"><i data-lucide="table" aria-hidden="true"></i>Data</a>
       <a href="./pdf-tools.html"><i data-lucide="files" aria-hidden="true"></i>PDF Tools</a>
     </nav>
   </div>
 </header>
-  <main class="workspace-screen">
+  <main id="tool-main" tabindex="-1" class="workspace-screen">
     <section class="workspace-hero" aria-labelledby="workspace-title">
     <h1 id="workspace-title" class="screen-title">Workspace</h1>
     <p class="screen-intro">Create or reopen documents, slide decks, and PDFs on this device.</p>
@@ -48,7 +50,7 @@
       <label>Sort<select id="sort"><option value="recent">Most recent</option><option value="title">Title</option></select></label>
       <label class="check"><input id="favorites" type="checkbox"> Favorites</label>
     </div>
-    <p id="status" role="status"></p>
+    <p id="status" class="tool-status" role="status"></p>
     <ul id="files" aria-label="Workspace files"></ul>
     </section>
     <aside class="bento-panel bento-workspace-tools" aria-labelledby="workspace-tools-title">

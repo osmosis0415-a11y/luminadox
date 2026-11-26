@@ -4,11 +4,18 @@
 <title>Review PDF · Lumina Docs</title>
 <link rel="stylesheet" href="./lumina-design.css?v=readable-1"><link rel="stylesheet" href="./pdf-review.css">
 <script src="./vendor/pdf-lib-1.17.1.min.js" defer></script><script src="./library-store.js" defer></script><script src="./pdf-review.js" defer></script>
-  <link rel="stylesheet" href="./lumina-bento.css?v=1">
+  <link rel="stylesheet" href="./lumina-bento.css?v=2">
 </head>
 <body class="lumina-app lumina-bento">
-<header class="lumina-shell"><div class="lumina-shell-inner"><a class="lumina-brand" href="./"><span class="lumina-mark" aria-hidden="true">L</span>Lumina Docs</a><nav class="lumina-nav" aria-label="App navigation"><a href="./workspace.html">Workspace</a><a href="./pdf-tools.html">PDF Tools</a></nav></div></header>
-<main class="review-screen">
+<a class="lumina-skip" href="#tool-main">Skip to main content</a>
+<header class="lumina-shell"><div class="lumina-shell-inner"><a class="lumina-brand" href="./"><span class="lumina-mark" aria-hidden="true">L</span>Lumina Docs</a><nav class="lumina-nav" aria-label="App navigation">
+      <a href="./workspace.html">Workspace</a>
+      <a href="./docs.html">Docs</a>
+      <a href="./slides.html">Slides</a>
+      <a href="./data.html">Data</a>
+      <a href="./pdf-tools.html" aria-current="location">PDF Tools</a>
+    </nav></div></header>
+<main id="tool-main" tabindex="-1" class="review-screen">
   <section class="bento-feature" aria-labelledby="pdf-review-title">
     <h1 id="pdf-review-title" class="screen-title">Review and scan PDFs</h1>
     <p class="screen-intro">Highlight a region, add page notes, or make scanned English text searchable. Files are processed on this device. Preview and OCR engines load from the internet.</p>
@@ -21,7 +28,7 @@
     <button id="highlight-mode" aria-pressed="false">Highlight region</button><button id="ocr-page">OCR this page</button><button id="ocr-all">OCR all pages</button>
     <button id="review-download">Download PDF copy</button>
   </fieldset>
-  <p id="review-status" role="status"></p>
+  <p id="review-status" class="tool-status" role="status"></p>
   <div id="review-body" hidden>
     <div id="preview-page"><canvas id="review-canvas" aria-label="PDF page preview"></canvas><div id="review-marks" aria-hidden="true"></div></div>
     <aside><label>Note for this page<textarea id="note-text" maxlength="1000" rows="3"></textarea></label><button id="add-note">Add page note</button>
