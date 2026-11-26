@@ -39,12 +39,6 @@ if (typeof document !== 'undefined') {
     selectSlide(Math.max(0, Math.min(slides.length - 1, steps[event.key])));
   });
 
-  const menu = document.querySelector('.bento-menu');
-  menu.addEventListener('keydown', event => {
-    if (event.key !== 'Escape' || !menu.open) return;
-    menu.open = false;
-    menu.querySelector('summary').focus();
-  });
   carousel.addEventListener('scroll', () => {
     const current = Math.round(carousel.scrollLeft / carousel.clientWidth);
     dots.forEach((dot, index) => {
